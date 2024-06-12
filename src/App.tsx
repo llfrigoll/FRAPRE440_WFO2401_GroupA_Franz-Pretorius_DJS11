@@ -1,11 +1,10 @@
 import React from 'react'
-import apiSetup from '../utils/Api'
+import Shows from './Shows'
 import './App.css'
 
 function App() {
-  apiSetup()
   return (
-    <></>
+    <Shows/>
   )
 }
 

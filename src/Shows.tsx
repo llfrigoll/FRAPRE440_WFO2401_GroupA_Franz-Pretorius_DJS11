@@ -31,7 +31,12 @@ export default function Shows() {
         return <h1>There was an error: {error.message}</h1>
     }
 
+    const singlepodcast = podcasts.map(podcast => (
+        <div key={podcast.id} className="podcast-description">
+            <p>{podcast.description}</p>
+        </div>
+    ))
     return (
-        <div>SUCCESSFUL</div>
+        <div>{singlepodcast}</div>
     )
 }
