@@ -1,4 +1,3 @@
-import React from 'react'
 import Shows from './Shows'
 import Header from '../components/Header'
 

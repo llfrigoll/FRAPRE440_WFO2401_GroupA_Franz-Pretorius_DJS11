@@ -1,5 +1,41 @@
 import {Preview, Show, Season, Episode, Genre} from './interfaces'
 
+export async function getShowInfo() {
+    const response = await fetch("https://podcast-api.netlify.app")
+    if (!response.ok) {
+        throw {
+            message: "Failed to fetch podcast info",
+            statusText: response.statusText,
+            status: response.status
+        }
+    }
+    const previews: Preview[] = await response.json()
+    
+
+    return previews
+}
+
+export async function getSeason(showId: string, seasonNum: number) {
+    const response = await fetch(`https://podcast-api.netlify.app/id/${showId}`)
+    if (!response.ok) {
+        throw {
+            message: "Failed to fetch podcast info",
+            statusText: response.statusText,
+            status: response.status
+        }
+    }
+    const show: Show = await response.json()
+    const season: Season = show.seasons[seasonNum - 1]
+
+    return season
+}
+
+export async function getEpisode(season: Season, episodeNum: number) {
+    const episode: Episode = season.episodes[episodeNum - 1]
+
+    return episode
+}
+
 export async function getGenres() {
     let genreArray: Genre[] = []
     let idCounter = 1
