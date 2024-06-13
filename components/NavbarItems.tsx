@@ -6,7 +6,7 @@ interface NavbarItemsProps {
 }
 
 const NavbarItems: React.FC<NavbarItemsProps> = ({ isToggled }) => {
-  const items = ["Home", "Products", "Services", "About"];
+  const items = ["Dashboard", "Favourites"];
 
   const navList = {
     visible: {
@@ -44,7 +44,7 @@ const NavbarItems: React.FC<NavbarItemsProps> = ({ isToggled }) => {
 
   return (
     <motion.ul
-      className="flex flex-col items-center pt-24 px-16 pb-52"
+      className="flex flex-col items-start pt-12  px-16 pb-52 text slate"
       initial="hidden"
       animate="visible"
       exit="hidden"
@@ -52,7 +52,7 @@ const NavbarItems: React.FC<NavbarItemsProps> = ({ isToggled }) => {
     >
       {items.map((item) => (
         <motion.li
-          className="text-xl text-white cursor-pointer list-none"
+          className="text-xl text-slate-300 cursor-pointer list-none mb-7 hover:text-white"
           variants={navItem}
           key={item}
         >

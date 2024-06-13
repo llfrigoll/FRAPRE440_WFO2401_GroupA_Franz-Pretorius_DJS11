@@ -24,16 +24,13 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <button
-        className="w-10 h-10 rounded-full border-none bg-turquoise cursor-pointer z-10"
-        onClick={() => setToggle(!isToggled)}
-      >
-        =
+      <button className="absolute top-5 left-0.5 z-10 w-10 h-10 text-3xl text-slate-400 rounded-full border-none cursor-pointer" onClick={() => setToggle(!isToggled)}>
+        ≡
       </button>
       <AnimatePresence>
         {isToggled && (
           <motion.div
-            className="w-64 h-full rounded-lg bg-gradient-to-t from-purple-600 to-purple-900"
+            className="fixed z-20 w-64 h-full bg-gradient-to-b from-slate-800 to-white"
             initial="hidden"
             animate={isToggled ? "visible" : "hidden"}
             exit="hidden"
