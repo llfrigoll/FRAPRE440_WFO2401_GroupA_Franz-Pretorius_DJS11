@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react"
-import { fetchPodcasts } from "../utils/Api"
+import { fetchPodcasts, getGenres } from "../utils/Api"
 import {Preview, Show, Season, Episode, Genre} from '../utils/interfaces'
 
 export default function Shows() {
     const [podcasts, setPodcasts] = useState<Show[]>([])
+    const [genres, setGenres] = useState<Genre[]>([])
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<any>(null)
 
@@ -11,8 +12,10 @@ export default function Shows() {
         async function loadPodcasts() {
             setLoading(true)
             try {
-                const data = await fetchPodcasts()
-                setPodcasts(data)
+                const podcastsData = await fetchPodcasts()
+                setPodcasts(podcastsData)
+                const genresData = await getGenres()
+                setGenres(genresData)
             } catch (err: any) {
                 setError(err)
             } finally {
@@ -31,12 +34,21 @@ export default function Shows() {
         return <h1>There was an error: {error.message}</h1>
     }
 
-    const singlepodcast = podcasts.map(podcast => (
-        <div key={podcast.id} className="podcast-description">
-            <p>{podcast.description}</p>
-        </div>
+    const singleGenre = genres.map(genre =>(
+        <div key={genre.id} className="genre-title">
+            <p>{genre.title}</p>
+         </div>
     ))
     return (
-        <div>{singlepodcast}</div>
+        <div>{singleGenre}</div>
     )
+
+    // const singlepodcast = podcasts.map(podcast => (
+    //     <div key={podcast.id} className="podcast-description">
+    //         <p>{podcast.description}</p>
+    //     </div>
+    // ))
+    // return (
+    //     <div>{singlepodcast}</div>
+    // )
 }
