@@ -4,13 +4,10 @@ import React from "react"
 export default function Header() {
 
     return (
-        <div className="header">
+        <div data-ref="header" className="">
          <input
              type="search"
-             name="search-bar"
              id="search-bar"
-             className="search-bar"
-              //onChange={(e) => setSearchQuery(e.target.value)}
              placeholder="Search podcast"
          />
         </div>
