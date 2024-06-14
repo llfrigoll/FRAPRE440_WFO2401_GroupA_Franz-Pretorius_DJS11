@@ -9,11 +9,6 @@ const Navbar: React.FC = () => {
   const dashboard = document.querySelector('div[data-ref="dashboard-container"]')
   if(isToggled) { 
     dashboard?.classList.add('brightness-50')
-    const navbarmenu = document.querySelector('div[data-ref="navbar-menu"]')
-    console.log(navbarmenu?.textContent)
-    if(navbarmenu) {
-      onClickOutside(navbarmenu, () => setToggle(!isToggled))
-    }
   }else {
     dashboard?.classList.remove('brightness-50')
   }
@@ -48,7 +43,7 @@ const Navbar: React.FC = () => {
             data-ref="navbar-menu"
             className="fixed z-30 w-64 h-full mt-20 bg-gradient-to-b from-slate-800 to-white"
             initial="hidden"
-            animate={isToggled ? "visible" : "hidden"}
+            animate={isToggled? "visible" : "hidden"}
             exit="hidden"
             variants={navContainer}
           >
