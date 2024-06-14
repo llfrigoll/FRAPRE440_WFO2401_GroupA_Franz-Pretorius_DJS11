@@ -1,9 +1,11 @@
 import React from "react"
 import { Preview, Genre } from '../utils/interfaces'
+import { Link } from 'react-router-dom'
 
 export default function PodcastTile(props: any) {
     const months = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
+    const id = props.propsPreview.id
     const title = props.propsPreview.title
     const seasons = props.propsPreview.seasons
     const image = props.propsPreview.image
@@ -19,12 +21,15 @@ export default function PodcastTile(props: any) {
     const genreString = genreNames.join(', ')
 
     return (
-        <div data-ref="preview-tile" className="h-100 w-50 flex flex-col items-start p-12 rounded-3xl bg-white">
-            <img src={image} className="h-40 w-40 self-center rounded-3xl"/>
-            <h1>{title}</h1>
-            <p>Seasons: {seasons}</p>
-            <p>Genres: {genreString}</p>
-            <p>Last updated: {updated}</p>
+        <div data-ref="preview-tile" className="h-100 w-50 pt-6 pb-6 flex flex-col items-start rounded-xl bg-white">
+            <img src={image} className="h-44 w-44 mb-5 self-center rounded-lg"/>
+            <div data-ref="preview-content" className="flex flex-col px-6 max-w-full">
+                <h1 className="text-slate-800 font-bold mb-2 text-nowrap whitespace-nowrap overflow-hidden text-ellipsis">{title}</h1>
+                <hr className="mb-2"/>
+                <p className="text-slate-800 text-sm">Seasons: {seasons}</p>
+                <p className="text-slate-800 text-sm">Genres: {genreString}</p>
+                <p className="text-slate-800 text-sm">Last updated: {updated}</p>
+            </div>
         </div>
     )
 }
