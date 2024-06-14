@@ -1,6 +1,7 @@
 import {Preview, Show, Season, Episode, Genre} from './interfaces'
+import { isUrl } from 'is-url'
 
-export async function getShowInfo() {
+export async function getPreviews() {
     const response = await fetch("https://podcast-api.netlify.app")
     if (!response.ok) {
         throw {
@@ -38,8 +39,17 @@ export async function getEpisode(season: Season, episodeNum: number) {
 
 export async function getGenres() {
     let genreArray: Genre[] = []
-    let idCounter = 1
-    let response = await fetch(`https://podcast-api.netlify.app/genre/${idCounter}`)
+
+    const previews = await getPreviews()
+    const genreIdSet = new Set()
+    previews.forEach(preview => {
+        preview.genres.forEach(genreId => {
+            genreIdSet.add(genreId)
+        })
+    })
+    const genreIdArray = Array.from(genreIdSet)
+
+    let response = await fetch(`https://podcast-api.netlify.app/genre/${genreIdArray[0]}`)
     if (!response.ok) {
         throw {
             message: "Failed to fetch podcast genres",
@@ -47,42 +57,51 @@ export async function getGenres() {
             status: response.status
         }
     }
+    const genre: Genre = await response.json()
+    genreArray.push(genre)
 
-    while(response.ok) {
-        const genre: Genre = await response.json()
-        genreArray.push(genre)
-        idCounter++
-        response = await fetch(`https://podcast-api.netlify.app/genre/${idCounter}`)
-    }
-
-    return genreArray
-}
-
-export async function fetchPodcasts() {
-    const response = await fetch("https://podcast-api.netlify.app")
-    if (!response.ok) {
-        throw {
-            message: "Failed to fetch podcast IDs",
-            statusText: response.statusText,
-            status: response.status
-        }
-    }
-    const previews = await response.json()
-
-    const podcastIdArray = previews.map((podcast: Preview) => podcast.id)
-
-    let podcastArray: Show[] = []
-    for (let i = 0; i < podcastIdArray.length; i++) {
-        const response = await fetch(`https://podcast-api.netlify.app/id/${podcastIdArray[i]}`)
+    for(let i = 1; i < genreIdArray.length; i++) {
+        let response = await fetch(`https://podcast-api.netlify.app/genre/${genreIdArray[i]}`)
         if (!response.ok) {
             throw {
-                message: "Failed to fetch podcasts",
+                message: "Failed to fetch podcast genre",
                 statusText: response.statusText,
                 status: response.status
             }
         }
-        const podcast: Show = await response.json()
-        podcastArray.push(podcast)
+        const genre: Genre = await response.json()
+        genreArray.push(genre)
     }
-    return podcastArray
+
+    console.log(genreArray)
+    return genreArray
 }
+
+// export async function fetchPodcasts() {
+//     const response = await fetch("https://podcast-api.netlify.app")
+//     if (!response.ok) {
+//         throw {
+//             message: "Failed to fetch podcast IDs",
+//             statusText: response.statusText,
+//             status: response.status
+//         }
+//     }
+//     const previews = await response.json()
+
+//     const podcastIdArray = previews.map((podcast: Preview) => podcast.id)
+
+//     let podcastArray: Show[] = []
+//     for (let i = 0; i < podcastIdArray.length; i++) {
+//         const response = await fetch(`https://podcast-api.netlify.app/id/${podcastIdArray[i]}`)
+//         if (!response.ok) {
+//             throw {
+//                 message: "Failed to fetch podcasts",
+//                 statusText: response.statusText,
+//                 status: response.status
+//             }
+//         }
+//         const podcast: Show = await response.json()
+//         podcastArray.push(podcast)
+//     }
+//     return podcastArray
+// }
