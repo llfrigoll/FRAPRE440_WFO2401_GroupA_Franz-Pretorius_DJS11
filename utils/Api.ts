@@ -1,7 +1,6 @@
 import {Preview, Show, Season, Episode, Genre} from './interfaces'
-import { isUrl } from 'is-url'
 
-export async function getPreviews() {
+export async function getAllPreviews() {
     const response = await fetch("https://podcast-api.netlify.app")
     if (!response.ok) {
         throw {
@@ -14,6 +13,15 @@ export async function getPreviews() {
     
 
     return previews
+}
+
+export async function getSinglePreview(showId: string) {
+    const previews: Preview[] = await getAllPreviews()
+    const preview = previews.find(preview => {
+        preview.id === showId
+    })
+
+    return preview
 }
 
 export async function getSeason(showId: string, seasonNum: number) {
@@ -40,7 +48,7 @@ export async function getEpisode(season: Season, episodeNum: number) {
 export async function getGenres() {
     let genreArray: Genre[] = []
 
-    const previews = await getPreviews()
+    const previews = await getAllPreviews()
     const genreIdSet = new Set()
     previews.forEach(preview => {
         preview.genres.forEach(genreId => {

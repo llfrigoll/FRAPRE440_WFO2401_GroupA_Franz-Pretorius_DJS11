@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react"
 import {Preview, Show, Season, Episode, Genre} from '../utils/interfaces'
-import { getGenres, getPreviews } from "../utils/Api"
+import { getAllPreviews, getGenres, getSinglePreview } from "../utils/Api"
 import LoadIcon from '../components/LoadIcon'
+import PodcastTile from '../components/PodcastTile'
 
 export default function Dashboard() {
     const [previews, setPreviews] = useState<Preview[]>([])
@@ -13,8 +14,8 @@ export default function Dashboard() {
         async function loadPreviews() {
             setLoading(true)
             try {
-                // const previewData = await getPreviews()
-                // setPreviews(previewData)
+                const previewData = await getAllPreviews()
+                setPreviews(previewData)
                 const genresData = await getGenres()
                 setGenres(genresData)
             } catch (err: any) {
@@ -36,7 +37,23 @@ export default function Dashboard() {
         return <h1>There was an error: {error.message}</h1>
     }
 
+    
+    const previewTiles = previews.map(preview => {
+        let props = {
+            propsPreview: preview,
+            propsGenres: genres
+        }
+            
+        return (
+            <PodcastTile {...props}/>
+        )
+        
+    })
+    
     return (
-        <></>
+        <div data-ref="tile-container" className="grid grid-cols-5 gap-10 bg-slate-300 p-10">
+            {previewTiles}
+        </div>
+        
     )
 }
