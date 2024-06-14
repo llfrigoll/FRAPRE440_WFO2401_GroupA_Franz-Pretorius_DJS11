@@ -3,6 +3,7 @@ import {Preview, Show, Season, Episode, Genre} from '../utils/interfaces'
 import { getAllPreviews, getGenres, getSinglePreview } from "../utils/Api"
 import LoadIcon from '../components/LoadIcon'
 import PodcastTile from '../components/PodcastTile'
+import Filters from '../components/Filters'
 
 export default function Dashboard() {
     const [previews, setPreviews] = useState<Preview[]>([])
@@ -29,7 +30,9 @@ export default function Dashboard() {
 
     if (loading) {
         return (
-            <LoadIcon />
+            <div data-ref="dashboard-container" className="pt-20">
+                <LoadIcon />
+            </div>
         )
     }
     
@@ -51,9 +54,13 @@ export default function Dashboard() {
     })
     
     return (
-        <div data-ref="tile-container" className="grid grid-cols-5 gap-10 bg-slate-300 p-10">
-            {previewTiles}
+        <div data-ref="dashboard-container" className="pt-20 bg-slate-300 transition-all">
+            <Filters />
+            <div data-ref="tile-container" className="grid grid-cols-5 gap-10  p-10">
+                {previewTiles}
+            </div>
         </div>
+        
         
     )
 }

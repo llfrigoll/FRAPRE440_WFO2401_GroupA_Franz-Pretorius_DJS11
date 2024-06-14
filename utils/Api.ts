@@ -81,7 +81,6 @@ export async function getGenres() {
         genreArray.push(genre)
     }
 
-    console.log(genreArray)
     return genreArray
 }
 

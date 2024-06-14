@@ -24,7 +24,7 @@ export default function PodcastTile(props: any) {
         <div data-ref="preview-tile" className="h-100 w-50 pt-6 pb-6 flex flex-col items-start rounded-xl bg-white">
             <img src={image} className="h-44 w-44 mb-5 self-center rounded-lg"/>
             <div data-ref="preview-content" className="flex flex-col px-6 max-w-full">
-                <h1 className="text-slate-800 font-bold mb-2 text-nowrap whitespace-nowrap overflow-hidden text-ellipsis">{title}</h1>
+                <h1 className="text-slate-800 font-bold mb-2 text-nowrap truncate">{title}</h1>
                 <hr className="mb-2"/>
                 <p className="text-slate-800 text-sm">Seasons: {seasons}</p>
                 <p className="text-slate-800 text-sm">Genres: {genreString}</p>
