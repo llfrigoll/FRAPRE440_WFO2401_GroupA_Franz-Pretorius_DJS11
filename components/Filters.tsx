@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import Select from 'react-select'
+import Select, { StylesConfig } from 'react-select'
 import { getGenres } from "../utils/Api"
 import LoadIcon from "./LoadIcon"
 
@@ -34,14 +34,30 @@ export default function Filters() {
         )
     }
 
+    const customStyles: StylesConfig = {
+        control: (provided) => ({
+            ...provided,
+            border: 'none',
+            boxShadow: 'none',
+            '&:hover': {
+                border: 'none',
+            },
+        }),
+        placeholder: (provided) => ({
+            ...provided,
+            color: "rgb(30,41,59)",
+            fontWeight: 500
+        })
+    }
+
     return (
         <div data-ref="filters-container" className="flex justify-between bg-white w-2/5 ml-auto mr-auto mt-10 px-6 py-2">
-            <button className="mr-2">Default</button>
-            <button className="">A-Z</button>
-            <button className="">Z-A</button>
-            <button className="">Newest</button>
-            <button className="">Oldest</button>
-            <Select options={genreNames} isClearable={true} placeholder="Select Genre" />
+            <button className="hover:text-gray-500 hover:font-normal text-slate-800 font-medium">Default</button>
+            <button className="hover:text-gray-500 hover:font-normal text-slate-800 font-medium">A-Z</button>
+            <button className="hover:text-gray-500 hover:font-normal text-slate-800 font-medium">Z-A</button>
+            <button className="hover:text-gray-500 hover:font-normal text-slate-800 font-medium">Newest</button>
+            <button className="hover:text-gray-500 hover:font-normal text-slate-800 font-medium">Oldest</button>
+            <Select styles={customStyles} options={genreNames} isClearable={true} placeholder="Genres" />
         </div>
     )
 }
