@@ -21,13 +21,14 @@ export default function Filters({ setState }: FiltersProps) {
     const [defaultFilter, setDefaultFilter] = useState<Preview[]>([]);
     const [selectedGenre, setSelectedGenre] = useState<OptionType | null>(null);
     const [sortFunction, setSortFunction] = useState<(a: Preview, b: Preview) => number>(() => () => 0);
+    const [selectedSort, setSelectedSort] = useState<string | null>(null);
 
     useEffect(() => {
         async function loadPreviews() {
             setLoading(true);
             const localPreviews = await getAllPreviews();
 
-            handleSort((a, b) => a.title.localeCompare(b.title))
+            handleSort("A-Z", (a, b) => a.title.localeCompare(b.title));
 
             setPreviews(localPreviews);
             setDefaultFilter(localPreviews);
@@ -54,6 +55,7 @@ export default function Filters({ setState }: FiltersProps) {
             ...provided,
             border: 'none',
             boxShadow: 'none',
+            width: 200,
             '&:hover': {
                 border: 'none',
             },
@@ -87,8 +89,9 @@ export default function Filters({ setState }: FiltersProps) {
         setSelectedGenre(selectedOption);
     };
 
-    const handleSort = (sortFunc: (a: Preview, b: Preview) => number) => {
+    const handleSort = (sortLabel: string, sortFunc: (a: Preview, b: Preview) => number) => {
         setSortFunction(() => sortFunc);
+        setSelectedSort(sortLabel);
     };
 
     if (loading) {
@@ -102,29 +105,29 @@ export default function Filters({ setState }: FiltersProps) {
     return (
         <div
             data-ref="filters-container"
-            className="flex justify-between rounded-sm bg-white w-2/5 ml-auto mr-auto mt-10 px-6 py-2"
+            className="flex justify-between rounded-sm w-2/5 ml-auto mr-10 mt-10 px-6 py-2"
         >
             <button
-                onClick={() => handleSort((a, b) => a.title.localeCompare(b.title))}
-                className="hover:text-gray-500 hover:font-normal text-slate-800 font-medium"
+                onClick={() => handleSort("A-Z", (a, b) => a.title.localeCompare(b.title))}
+                className={`hover:text-gray-500 hover:font-normal text-slate-800 font-medium ${selectedSort === "A-Z" ? "underline" : ""}`}
             >
                 A-Z
             </button>
             <button
-                onClick={() => handleSort((a, b) => -a.title.localeCompare(b.title))}
-                className="hover:text-gray-500 hover:font-normal text-slate-800 font-medium"
+                onClick={() => handleSort("Z-A", (a, b) => -a.title.localeCompare(b.title))}
+                className={`hover:text-gray-500 hover:font-normal text-slate-800 font-medium ${selectedSort === "Z-A" ? "underline" : ""}`}
             >
                 Z-A
             </button>
             <button
-                onClick={() => handleSort((a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime())}
-                className="hover:text-gray-500 hover:font-normal text-slate-800 font-medium"
+                onClick={() => handleSort("Newest", (a, b) => new Date(b.updated).getTime() - new Date(a.updated).getTime())}
+                className={`hover:text-gray-500 hover:font-normal text-slate-800 font-medium ${selectedSort === "Newest" ? "underline" : ""}`}
             >
                 Newest
             </button>
             <button
-                onClick={() => handleSort((a, b) => new Date(a.updated).getTime() - new Date(b.updated).getTime())}
-                className="hover:text-gray-500 hover:font-normal text-slate-800 font-medium"
+                onClick={() => handleSort("Oldest", (a, b) => new Date(a.updated).getTime() - new Date(b.updated).getTime())}
+                className={`hover:text-gray-500 hover:font-normal text-slate-800 font-medium ${selectedSort === "Oldest" ? "underline" : ""}`}
             >
                 Oldest
             </button>
