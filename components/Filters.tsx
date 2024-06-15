@@ -1,15 +1,26 @@
 import React, { useEffect, useState } from "react";
-import Select, { StylesConfig } from 'react-select';
+import Select, { StylesConfig, SingleValue } from 'react-select';
 import { getAllPreviews, getGenres } from "../utils/Api";
 import LoadIcon from "./LoadIcon";
 import { Genre, Preview } from "../utils/interfaces";
 
-export default function Filters({ setState }: any) {
-    const [genreNames, setGenreNames] = useState<Object[]>([]);
+interface OptionType {
+    value: string;
+    label: string;
+}
+
+interface FiltersProps {
+    setState: (previews: Preview[]) => void;
+}
+
+export default function Filters({ setState }: FiltersProps) {
+    const [genreNames, setGenreNames] = useState<OptionType[]>([]);
     const [loading, setLoading] = useState(false);
     const [genres, setGenres] = useState<Genre[]>([]);
     const [previews, setPreviews] = useState<Preview[]>([]);
     const [defaultFilter, setDefaultFilter] = useState<Preview[]>([]);
+    const [selectedGenre, setSelectedGenre] = useState<OptionType | null>(null);
+    const [sortFunction, setSortFunction] = useState<(a: Preview, b: Preview) => number>(() => (a, b) => 0);
 
     useEffect(() => {
         async function loadPreviews() {
@@ -35,15 +46,7 @@ export default function Filters({ setState }: any) {
         loadGenreFilter();
     }, []);
 
-    if (loading) {
-        return (
-            <div data-ref="dashboard-container" className="pt-20">
-                <LoadIcon />
-            </div>
-        );
-    }
-
-    const customStyles: StylesConfig = {
+    const customStyles: StylesConfig<OptionType, false> = {
         control: (provided) => ({
             ...provided,
             border: 'none',
@@ -59,23 +62,37 @@ export default function Filters({ setState }: any) {
         })
     };
 
-    const handleGenreChange = (selectedOption: any) => {
-        if (!selectedOption) {
-            setState(previews);
-        } else {
-            const selectedGenre = genres.find(genre => genre.title.toLowerCase() === selectedOption.value);
-            if (selectedGenre) {
-                const showIds = selectedGenre.shows;
-                const genreFilter = previews.filter(preview => showIds.includes(preview.id));
-                setState(genreFilter);
+    const applyFiltersAndSort = () => {
+        let filteredPreviews = [...defaultFilter];
+
+        if (selectedGenre) {
+            const genre = genres.find(g => g.title.toLowerCase() === selectedGenre.value);
+            if (genre) {
+                filteredPreviews = filteredPreviews.filter(preview => genre.shows.includes(preview.id));
             }
         }
+
+        filteredPreviews.sort(sortFunction);
+        setState(filteredPreviews);
     };
 
-    const handleSort = (sortFunction: (a: Preview, b: Preview) => number) => {
-        const sortedPreviews = [...previews].sort(sortFunction);
-        setState(sortedPreviews);
+    const handleGenreChange = (selectedOption: SingleValue<OptionType>) => {
+        setSelectedGenre(selectedOption);
+        applyFiltersAndSort();
     };
+
+    const handleSort = (sortFunc: (a: Preview, b: Preview) => number) => {
+        setSortFunction(() => sortFunc);
+        applyFiltersAndSort();
+    };
+
+    if (loading) {
+        return (
+            <div data-ref="dashboard-container" className="pt-20">
+                <LoadIcon />
+            </div>
+        );
+    }
 
     return (
         <div
@@ -83,7 +100,11 @@ export default function Filters({ setState }: any) {
             className="flex justify-between rounded-sm bg-white w-2/5 ml-auto mr-auto mt-10 px-6 py-2"
         >
             <button
-                onClick={() => setState(defaultFilter)}
+                onClick={() => {
+                    setSelectedGenre(null);
+                    setSortFunction(() => (a, b) => 0);
+                    setState(defaultFilter);
+                }}
                 className="hover:text-gray-500 hover:font-normal text-slate-800 font-medium"
             >
                 All
