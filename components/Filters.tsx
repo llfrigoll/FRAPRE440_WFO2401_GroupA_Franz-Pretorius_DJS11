@@ -9,24 +9,28 @@ import { Genre, Preview } from "../utils/interfaces"
 export default function Filters({setState}: any) {
     const [genreNames, setGenreNames] = useState<Object[]>([])
     const [loading, setLoading] = useState(false)
-    let previews: Preview[] = []
-    let defaultFilter: Preview[] = []
-    let genres: Genre[] = []
+    const [genres, setGenres] = useState<Genre[]>([])
+    const [isGenreSelected, setIsGenreSelected] = useState(false)
+    const [selectedGenre, setSelectedGenre] = useState<any>(null)
+    const [previews, setPreviews] = useState<Preview[]>([])
+    const [defaultFilter, setDefaultFilter] = useState<Preview[]>([])
 
-    async function loadPreviews() {
-        previews = await getAllPreviews()
-        defaultFilter = [...previews]
-        genres = await getGenres()
-    }
-    loadPreviews()
+    useEffect(() => {
+        async function loadPreviews() {
+            const localPreviews = await getAllPreviews()
+            setPreviews(localPreviews)
+            const localDefaultFilter = [...previews]
+            setDefaultFilter(localDefaultFilter)
+        }
+        loadPreviews()
+    },[])
         
-    
-
     useEffect(() => {
         async function loadGenreFilter() {
             setLoading(true)
-            const genres = await getGenres()
-            const options = genres.map(genre => {
+            const localGenres = await getGenres()
+            setGenres(localGenres)
+            const options = localGenres.map(genre => {
                 const option = {
                     value: genre.title.toLowerCase(),
                     label: genre.title
@@ -64,13 +68,12 @@ export default function Filters({setState}: any) {
     }
 
     const handleGenreChange = (selectedOption: any) => {
-        
         if(!selectedOption) {
+            setSelectedGenre(null)
             setState(previews)
         } else {
-            console.log(previews)
+            setSelectedGenre(selectedOption)
             const selectedGenre = genres.find(genre => genre.title.toLowerCase() === selectedOption.value)
-            
             if(selectedGenre) {
                 let showIds = []
                 showIds = [...selectedGenre.shows]
@@ -80,6 +83,12 @@ export default function Filters({setState}: any) {
         }
     }
 
+    if(selectedGenre) {
+        setIsGenreSelected(true)
+    }else{
+        setIsGenreSelected(false)
+    }
+
     return (
       <div
         data-ref="filters-container"
@@ -87,20 +96,28 @@ export default function Filters({setState}: any) {
       >
         <button
           onClick={() => {
-            previews = []
-            previews = [...defaultFilter]
+            setPreviews([])
+            setPreviews([...defaultFilter])
+            if(isGenreSelected) {
+                handleGenreChange(selectedGenre)
+            }
             setState(previews)}
           }
           className="hover:text-gray-500 hover:font-normal text-slate-800 font-medium"
         >
-          Default
+          All
         </button>
         <button
           onClick={() => {
+            // previews = []
+            // previews = [...defaultFilter]
             const sortedPreviews = [...previews.sort((a: Preview, b: Preview) =>
                 a.title.localeCompare(b.title)
               )]
-            previews = [...sortedPreviews]
+            setPreviews([...sortedPreviews])
+            if(isGenreSelected) {
+                handleGenreChange(selectedGenre)
+            }
             setState(previews)}
           }
           className="hover:text-gray-500 hover:font-normal text-slate-800 font-medium"
@@ -109,10 +126,15 @@ export default function Filters({setState}: any) {
         </button>
         <button
           onClick={() => {
+            // previews = []
+            // previews = [...defaultFilter]
             const sortedPreviews = [...previews.sort((a: Preview, b: Preview) =>
                 -a.title.localeCompare(b.title)
               )]
-            previews = [...sortedPreviews]
+              setPreviews([...sortedPreviews])
+            if(isGenreSelected) {
+                handleGenreChange(selectedGenre)
+            }
             setState(previews)}
           }
           className="hover:text-gray-500 hover:font-normal text-slate-800 font-medium"
@@ -121,10 +143,15 @@ export default function Filters({setState}: any) {
         </button>
         <button
           onClick={() => {
+            // previews = []
+            // previews = [...defaultFilter]
             const sortedPreviews = [...previews.sort((a: Preview, b: Preview) => {
                 return -(new Date(a.updated).getTime() - new Date(b.updated).getTime());
               })]
-              previews = [...sortedPreviews]
+              setPreviews([...sortedPreviews])
+              if(isGenreSelected) {
+                handleGenreChange(selectedGenre)
+            }
             setState(previews)}
           }
           className="hover:text-gray-500 hover:font-normal text-slate-800 font-medium"
@@ -133,10 +160,15 @@ export default function Filters({setState}: any) {
         </button>
         <button
           onClick={() => {
+            // previews = []
+            // previews = [...defaultFilter]
             const sortedPreviews = [...previews.sort((a: Preview, b: Preview) => {
                 return new Date(a.updated).getTime() - new Date(b.updated).getTime();
               })]
-              previews = [...sortedPreviews]
+              setPreviews([...sortedPreviews])
+              if(isGenreSelected) {
+                handleGenreChange(selectedGenre)
+            }
             setState(previews)}
           }
           className="hover:text-gray-500 hover:font-normal text-slate-800 font-medium"
