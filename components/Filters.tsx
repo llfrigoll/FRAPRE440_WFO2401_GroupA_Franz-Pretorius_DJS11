@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Select, { StylesConfig, SingleValue } from 'react-select';
 import { getAllPreviews, getGenres } from "../utils/Api";
 import LoadIcon from "./LoadIcon";
@@ -62,7 +62,7 @@ export default function Filters({ setState }: FiltersProps) {
         })
     };
 
-    const applyFiltersAndSort = () => {
+    const applyFiltersAndSort = useCallback(() => {
         let filteredPreviews = [...defaultFilter];
 
         if (selectedGenre) {
@@ -74,16 +74,18 @@ export default function Filters({ setState }: FiltersProps) {
 
         filteredPreviews.sort(sortFunction);
         setState(filteredPreviews);
-    };
+    }, [defaultFilter, selectedGenre, sortFunction, genres, setState]);
+
+    useEffect(() => {
+        applyFiltersAndSort();
+    }, [applyFiltersAndSort]);
 
     const handleGenreChange = (selectedOption: SingleValue<OptionType>) => {
         setSelectedGenre(selectedOption);
-        applyFiltersAndSort();
     };
 
     const handleSort = (sortFunc: (a: Preview, b: Preview) => number) => {
         setSortFunction(() => sortFunc);
-        applyFiltersAndSort();
     };
 
     if (loading) {
