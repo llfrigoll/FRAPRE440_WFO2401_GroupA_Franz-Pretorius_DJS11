@@ -16,14 +16,16 @@ export default function Filters({setState}: any) {
     async function loadPreviews() {
         previews = await getAllPreviews()
         defaultFilter = [...previews]
+        genres = await getGenres()
     }
     loadPreviews()
+        
     
 
     useEffect(() => {
         async function loadGenreFilter() {
             setLoading(true)
-            genres = await getGenres()
+            const genres = await getGenres()
             const options = genres.map(genre => {
                 const option = {
                     value: genre.title.toLowerCase(),
@@ -62,21 +64,18 @@ export default function Filters({setState}: any) {
     }
 
     const handleGenreChange = (selectedOption: any) => {
+        
         if(!selectedOption) {
             setState(previews)
         } else {
-            
-        }
-    }
-
-    const bleh = (selectedOption: any) => {
-        if (!selectedOption) {
-            setState(defaultFilter)
-        } else {
+            console.log(previews)
             const selectedGenre = genres.find(genre => genre.title.toLowerCase() === selectedOption.value)
-            if (selectedGenre) {
-                const filteredPreviews = previews.filter(preview => selectedGenre.previews.includes(preview.id))
-                setState(filteredPreviews)
+            
+            if(selectedGenre) {
+                let showIds = []
+                showIds = [...selectedGenre.shows]
+                const genreFilter = previews.filter(preview => showIds.includes(preview.id))
+                setState(genreFilter)
             }
         }
     }
