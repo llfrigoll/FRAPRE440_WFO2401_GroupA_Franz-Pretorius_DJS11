@@ -20,12 +20,15 @@ export default function Filters({ setState }: FiltersProps) {
     const [previews, setPreviews] = useState<Preview[]>([]);
     const [defaultFilter, setDefaultFilter] = useState<Preview[]>([]);
     const [selectedGenre, setSelectedGenre] = useState<OptionType | null>(null);
-    const [sortFunction, setSortFunction] = useState<(a: Preview, b: Preview) => number>(() => (a, b) => 0);
+    const [sortFunction, setSortFunction] = useState<(a: Preview, b: Preview) => number>(() => () => 0);
 
     useEffect(() => {
         async function loadPreviews() {
             setLoading(true);
             const localPreviews = await getAllPreviews();
+
+            handleSort((a, b) => a.title.localeCompare(b.title))
+
             setPreviews(localPreviews);
             setDefaultFilter(localPreviews);
             setLoading(false);
@@ -101,16 +104,6 @@ export default function Filters({ setState }: FiltersProps) {
             data-ref="filters-container"
             className="flex justify-between rounded-sm bg-white w-2/5 ml-auto mr-auto mt-10 px-6 py-2"
         >
-            <button
-                onClick={() => {
-                    setSelectedGenre(null);
-                    setSortFunction(() => (a, b) => 0);
-                    setState(defaultFilter);
-                }}
-                className="hover:text-gray-500 hover:font-normal text-slate-800 font-medium"
-            >
-                All
-            </button>
             <button
                 onClick={() => handleSort((a, b) => a.title.localeCompare(b.title))}
                 className="hover:text-gray-500 hover:font-normal text-slate-800 font-medium"
