@@ -11,6 +11,10 @@ export default function Dashboard() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<any>(null)
 
+    function handlePreviews(previews: Preview[]) {
+        setPreviews(previews)
+    }
+
     useEffect(() => {
         async function loadPreviews() {
             setLoading(true)
@@ -45,6 +49,7 @@ export default function Dashboard() {
         let props = {
             propsPreview: preview,
             propsGenres: genres
+            
         }
             
         return (
@@ -55,7 +60,7 @@ export default function Dashboard() {
     
     return (
         <div data-ref="dashboard-container" className="pt-20 bg-slate-300 transition-all">
-            <Filters />
+            <Filters setState = {handlePreviews}/>
             <div data-ref="tile-container" className="grid grid-cols-5 gap-10  p-10">
                 {previewTiles}
             </div>
