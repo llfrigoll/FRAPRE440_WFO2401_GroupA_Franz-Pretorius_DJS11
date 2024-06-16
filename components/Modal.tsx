@@ -2,12 +2,14 @@ import React from "react"
 
 interface ModalProps {
     handleNav: (value: boolean) => void;
+    hidepopup: () => void;
   }
 
-export default function Modal({handleNav}: ModalProps) {
+export default function Modal({handleNav, hidepopup}: ModalProps) {
     const modalClicked = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         event.stopPropagation();
         handleNav(false);
+        hidepopup()
     }
 
     return (

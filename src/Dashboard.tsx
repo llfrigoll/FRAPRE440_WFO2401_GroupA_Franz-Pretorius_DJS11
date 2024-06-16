@@ -6,7 +6,11 @@ import PodcastTile from '../components/PodcastTile';
 import Filters from '../components/Filters';
 import SearchBar from '../components/SearchBar';
 
-export default function Dashboard() {
+interface DashboardProps {
+    onTileClick: (show: Preview) => void;
+  }
+
+export default function Dashboard({ onTileClick }: DashboardProps) {
     const [previews, setPreviews] = useState<Preview[]>([]);
     const [filteredPreviews, setFilteredPreviews] = useState<Preview[]>([]);
     const [genres, setGenres] = useState<Genre[]>([]);
@@ -83,7 +87,7 @@ export default function Dashboard() {
     }
 
     const previewTiles = filteredPreviews.map(preview => (
-        <PodcastTile key={preview.id} propsPreview={preview} propsGenres={genres} />
+        <PodcastTile key={preview.id} propsPreview={preview} propsGenres={genres} onTileClick={onTileClick}/>
     ));
 
     return (
