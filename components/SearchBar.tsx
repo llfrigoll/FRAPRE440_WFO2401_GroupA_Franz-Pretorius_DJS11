@@ -1,36 +1,51 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Preview } from "../utils/interfaces";
-import { getAllPreviews } from "../utils/Api";
 import LoadIcon from "./LoadIcon";
+import { getAllPreviews } from "../utils/Api";
 
 interface SearchBarProps {
     setState: (previews: Preview[]) => void;
-    state: Preview[]
 }
 
-export default function SearchBar({ setState, state }: SearchBarProps) {
-    const [previews, setPreviews] = useState<Preview[]>([])
-    const [loading, setLoading] = useState(false)
+export default function SearchBar({ setState}: SearchBarProps) {
+    const [previews, setPreviews] = useState<Preview[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [text, setText] = useState('');
 
     useEffect(() => {
         async function loadPreviews() {
             setLoading(true);
-            const localPreviews: Preview[] = [...state] 
+            console.log("Loading previews...");
+            const localPreviews: Preview[] = await getAllPreviews();
             setPreviews(localPreviews);
+            console.log("Previews loaded:", localPreviews);
             setLoading(false);
         }
         loadPreviews();
     }, []);
 
-    function handleChange() {
-        let textInput = document.querySelector('input[data-ref="search-input"]')?.textContent
-        if(textInput) {
-            const filterPreviews = state.filter(preview => {
-                return preview.title.toLowerCase().includes(textInput.toLowerCase())
-            })
-            setState(filterPreviews)
+    const applyFiltersAndSort = useCallback(() => {
+        console.log("Applying filters and sort with text:", text);
+        if (text) {
+            const filteredPreviews = previews.filter(preview =>
+                preview.title.toLowerCase().includes(text.toLowerCase())
+            );
+            console.log("Filtered previews:", filteredPreviews);
+            setState(filteredPreviews);
+        } else {
+            console.log("Setting all previews as no search text is provided");
+            setState(previews);
         }
-    }
+    }, [text]);
+
+    useEffect(() => {
+        applyFiltersAndSort();
+    }, [applyFiltersAndSort]);
+
+    const handleText = (event: React.ChangeEvent<HTMLInputElement>) => {
+        console.log("Text changed:", event.target.value);
+        setText(event.target.value);
+    };
 
     if (loading) {
         return (
@@ -42,7 +57,14 @@ export default function SearchBar({ setState, state }: SearchBarProps) {
 
     return (
         <div data-ref="search-bar" className="relative h-1/2 ml-auto mr-14 pt-5 mb-auto z-10 border-1 border-solid border-red-500">
-            <input onChange={handleChange} type="text" data-ref="search-input" placeholder="Search" className="absolute p-2 pr-10 right-0 bg-slate-600 placeholder-slate-300 rounded-2xl text-slate-300 focus:outline focus:outline-2 focus:outline-slate-300"/>
-        </div> 
-    )  
+            <input
+                onChange={handleText}
+                value={text}
+                type="text"
+                data-ref="search-input"
+                placeholder="Search"
+                className="absolute p-2 pr-10 right-0 bg-slate-600 placeholder-slate-300 rounded-2xl text-slate-300 focus:outline focus:outline-2 focus:outline-slate-300"
+            />
+        </div>
+    );
 }

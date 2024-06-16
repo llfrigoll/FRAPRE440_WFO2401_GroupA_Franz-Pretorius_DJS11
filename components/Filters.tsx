@@ -79,7 +79,7 @@ export default function Filters({ setState }: FiltersProps) {
 
         filteredPreviews.sort(sortFunction);
         setState(filteredPreviews);
-    }, [defaultFilter, selectedGenre, sortFunction, genres, setState]);
+    }, [selectedGenre, sortFunction]);
 
     useEffect(() => {
         applyFiltersAndSort();

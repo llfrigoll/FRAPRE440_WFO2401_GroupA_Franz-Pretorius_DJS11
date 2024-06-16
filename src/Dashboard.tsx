@@ -61,7 +61,7 @@ export default function Dashboard() {
     
     return (
         <>
-            <SearchBar setState = {handlePreviews} state ={previews}/>
+            <SearchBar setState = {handlePreviews}/>
             <div data-ref="dashboard-container" className="pt-20 bg-slate-300 transition-all">
                 <Filters setState = {handlePreviews}/>
                 <div data-ref="tile-container" className="grid grid-cols-5 gap-10  p-10">
