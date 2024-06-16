@@ -4,6 +4,7 @@ import { getAllPreviews, getGenres, getSinglePreview } from "../utils/Api"
 import LoadIcon from '../components/LoadIcon'
 import PodcastTile from '../components/PodcastTile'
 import Filters from '../components/Filters'
+import SearchBar from '../components/SearchBar'
 
 export default function Dashboard() {
     const [previews, setPreviews] = useState<Preview[]>([])
@@ -59,13 +60,14 @@ export default function Dashboard() {
     })
     
     return (
-        <div data-ref="dashboard-container" className="pt-20 bg-slate-300 transition-all">
-            <Filters setState = {handlePreviews}/>
-            <div data-ref="tile-container" className="grid grid-cols-5 gap-10  p-10">
-                {previewTiles}
+        <>
+            <SearchBar setState = {handlePreviews} {...previews}/>
+            <div data-ref="dashboard-container" className="pt-20 bg-slate-300 transition-all">
+                <Filters setState = {handlePreviews}/>
+                <div data-ref="tile-container" className="grid grid-cols-5 gap-10  p-10">
+                    {previewTiles}
+                </div>
             </div>
-        </div>
-        
-        
+        </>
     )
 }
