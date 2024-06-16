@@ -50,7 +50,7 @@ const Navbar: React.FC<NavbarProps> = ({ handleModal }) => {
             exit="hidden"
             variants={navContainer}
           >
-            <NavbarItems isToggled={isToggled} />
+            <NavbarItems />
           </motion.div>
         )}
       </AnimatePresence>
