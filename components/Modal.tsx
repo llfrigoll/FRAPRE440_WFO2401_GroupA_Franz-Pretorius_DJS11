@@ -5,11 +5,12 @@ interface ModalProps {
   }
 
 export default function Modal({handleModal}: ModalProps) {
-    function modalClicked() {
-        handleModal(false)
+    const modalClicked = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        event.stopPropagation();
+        handleModal(false);
     }
 
     return (
-        <div onClick={modalClicked} className="absolute w-full h-full bg-black z-70 opacity-50 visible"></div>
+        <div data-ref="modal" onClick={modalClicked} className="absolute w-full h-full bg-black z-70 opacity-50 visible"></div>
     )
 }
