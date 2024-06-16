@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Preview } from "../utils/interfaces";
+import { getAllPreviews } from "../utils/Api";
+import LoadIcon from "./LoadIcon";
 
 interface SearchBarProps {
     setState: (previews: Preview[]) => void;
@@ -7,6 +9,18 @@ interface SearchBarProps {
 }
 
 export default function SearchBar({ setState, state }: SearchBarProps) {
+    const [previews, setPreviews] = useState<Preview[]>([])
+    const [loading, setLoading] = useState(false)
+
+    useEffect(() => {
+        async function loadPreviews() {
+            setLoading(true);
+            const localPreviews: Preview[] = [...state] 
+            setPreviews(localPreviews);
+            setLoading(false);
+        }
+        loadPreviews();
+    }, []);
 
     function handleChange() {
         let textInput = document.querySelector('input[data-ref="search-input"]')?.textContent
@@ -16,6 +30,14 @@ export default function SearchBar({ setState, state }: SearchBarProps) {
             })
             setState(filterPreviews)
         }
+    }
+
+    if (loading) {
+        return (
+            <div data-ref="dashboard-container" className="pt-20">
+                <LoadIcon />
+            </div>
+        );
     }
 
     return (
