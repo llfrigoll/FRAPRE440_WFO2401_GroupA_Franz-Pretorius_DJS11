@@ -1,16 +1,19 @@
-import React, { useState } from "react"
+import React, { createElement, useState } from "react"
 import NavbarItems from "./NavbarItems"
+import Modal from './Modal'
 import { motion, AnimatePresence } from "framer-motion"
-import { onClickOutside } from "../utils/Helpers"
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  handleModal: (value: boolean) => void;
+}
+
+const Navbar: React.FC<NavbarProps> = ({handleModal}) => {
   const [isToggled, setToggle] = useState<boolean>(false)
 
-  const dashboard = document.querySelector('div[data-ref="dashboard-container"]')
   if(isToggled) { 
-    dashboard?.classList.add('brightness-50')
+    handleModal(true)
   }else {
-    dashboard?.classList.remove('brightness-50')
+    handleModal(false)
   }
 
   const navContainer = {
@@ -41,7 +44,7 @@ const Navbar: React.FC = () => {
         {isToggled && (
           <motion.div
             data-ref="navbar-menu"
-            className="fixed z-30 w-64 h-full mt-20 bg-gradient-to-b from-slate-800 to-white"
+            className="fixed z-80 w-64 h-full mt-20 bg-gradient-to-b from-slate-800 to-white"
             initial="hidden"
             animate={isToggled? "visible" : "hidden"}
             exit="hidden"
