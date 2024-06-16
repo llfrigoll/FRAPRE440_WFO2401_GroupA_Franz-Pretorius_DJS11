@@ -1,19 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 import NavbarItems from "./NavbarItems";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface NavbarProps {
   handleNav: (value: boolean) => void;
-  isActive: boolean
+  isActive: boolean;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ handleNav, isActive}) => {
-  const [isToggled, setToggle] = useState<boolean>(false);
+const Navbar: React.FC<NavbarProps> = ({ handleNav, isActive }) => {
 
   const handleToggle = () => {
-    const newState = !isToggled;
-    setToggle(newState);
-    handleNav(newState);
+    handleNav(!isActive);
   };
 
   const navContainer = {
