@@ -23,6 +23,7 @@ export default function Filters({ onGenreChange, onSortChange }: FiltersProps) {
     useEffect(() => {
         async function loadGenres() {
             setLoading(true);
+            handleSortChange("A-Z", (a, b) => a.title.localeCompare(b.title))
             const localGenres = await getGenres();
             const options = localGenres.map(genre => ({
                 value: genre.title.toLowerCase(),
