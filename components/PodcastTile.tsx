@@ -26,7 +26,6 @@ export default function PodcastTile({
 
   const clickHandler = () => {
     onTileClick(propsPreview);
-    //set modal active
   };
 
   return (

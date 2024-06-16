@@ -15,6 +15,20 @@ export async function getAllPreviews() {
     return previews
 }
 
+export async function getShow(showId: string) {
+    const response = await fetch(`https://podcast-api.netlify.app/id/${showId}`)
+        if (!response.ok) {
+            throw {
+                message: "Failed to fetch podcast",
+                statusText: response.statusText,
+                status: response.status
+            }
+        }
+        const podcast: Show = await response.json()
+
+        return podcast
+}
+
 export async function getSinglePreview(showId: string) {
     const previews: Preview[] = await getAllPreviews()
     const preview = previews.find(preview => {

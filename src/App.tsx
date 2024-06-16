@@ -35,7 +35,7 @@ export default function App() {
       <Header />
       <Navbar handleNav={navHandler} isActive={navActive} />
       <Dashboard onTileClick={showPopUp} />
-      {popUpActive && currentShow && <PopUp show={currentShow} />}
+      {popUpActive && currentShow && <PopUp showId={currentShow.id} />}
     </div>
   );
 }
