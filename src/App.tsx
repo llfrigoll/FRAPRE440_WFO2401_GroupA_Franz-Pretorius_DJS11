@@ -6,16 +6,18 @@ import Modal from '../components/Modal';
 
 export default function App() {
   const [modalActive, setModalActive] = useState(false);
+  const [navActive, setNavActive] = useState(false);
 
-  const modalHandler = (value: boolean) => {
+  const navHandler = (value: boolean) => {
     setModalActive(value);
+    setNavActive(value)
   };
 
   return (
     <div data-ref="app-container" className="relative">
-      {modalActive && <Modal handleModal={modalHandler} />}
+      {modalActive && <Modal handleNav={navHandler} />}
       <Header />
-      <Navbar handleModal={modalHandler} />
+      <Navbar handleNav={navHandler} isActive ={navActive}/>
       <Dashboard />
     </div>
   );

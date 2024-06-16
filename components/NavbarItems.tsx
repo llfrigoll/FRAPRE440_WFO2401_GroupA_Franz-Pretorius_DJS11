@@ -1,11 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-interface NavbarItemsProps {
-  isToggled: boolean;
-}
-
-const NavbarItems: React.FC<NavbarItemsProps> = ({ isToggled }) => {
+const NavbarItems: React.FC = () => {
   const items = ["Dashboard", "Favourites"];
 
   const navList = {

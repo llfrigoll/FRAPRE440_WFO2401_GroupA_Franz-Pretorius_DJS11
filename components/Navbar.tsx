@@ -3,16 +3,17 @@ import NavbarItems from "./NavbarItems";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface NavbarProps {
-  handleModal: (value: boolean) => void;
+  handleNav: (value: boolean) => void;
+  isActive: boolean
 }
 
-const Navbar: React.FC<NavbarProps> = ({ handleModal }) => {
+const Navbar: React.FC<NavbarProps> = ({ handleNav, isActive}) => {
   const [isToggled, setToggle] = useState<boolean>(false);
 
   const handleToggle = () => {
     const newState = !isToggled;
     setToggle(newState);
-    handleModal(newState);
+    handleNav(newState);
   };
 
   const navContainer = {
@@ -41,7 +42,7 @@ const Navbar: React.FC<NavbarProps> = ({ handleModal }) => {
         ≡
       </button>
       <AnimatePresence>
-        {isToggled && (
+        {isActive && (
           <motion.div
             data-ref="navbar-menu"
             className="fixed z-80 w-64 h-full mt-20 bg-gradient-to-b from-slate-800 to-white"
