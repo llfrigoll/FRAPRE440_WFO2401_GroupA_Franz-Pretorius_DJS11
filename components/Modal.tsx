@@ -13,6 +13,6 @@ export default function Modal({handleNav, hidepopup}: ModalProps) {
     }
 
     return (
-        <div data-ref="modal" onClick={modalClicked} className="absolute w-full h-full bg-black z-70 opacity-50 visible"></div>
+        <div data-ref="modal" onClick={modalClicked} className="absolute w-full h-full bg-black z-30 opacity-50 visible"></div>
     )
 }

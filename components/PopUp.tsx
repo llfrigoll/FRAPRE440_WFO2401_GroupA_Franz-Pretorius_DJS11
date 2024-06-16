@@ -7,7 +7,7 @@ interface PopUpProps {
 
 export default function PopUp({ show }: PopUpProps) {
   return (
-    <div className="fixed top-0 left-0 w-screen h-screen bg-white z-50">
+    <div className="fixed top-1/4 left-1/4 w-1/2 h-1/2 bg-white z-50">
       <h1>{show.title}</h1>
       {/* Add more details as needed */}
     </div>

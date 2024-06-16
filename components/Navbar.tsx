@@ -33,7 +33,7 @@ const Navbar: React.FC<NavbarProps> = ({ handleNav, isActive }) => {
   return (
     <>
       <button
-        className="fixed top-5 left-0.5 z-20 w-10 h-10 text-3xl text-slate-400 rounded-full border-none cursor-pointer"
+        className="fixed top-5 left-0.5 z-50 w-10 h-10 text-3xl text-slate-400 rounded-full border-none cursor-pointer"
         onClick={handleToggle}
       >
         ≡
@@ -42,7 +42,7 @@ const Navbar: React.FC<NavbarProps> = ({ handleNav, isActive }) => {
         {isActive && (
           <motion.div
             data-ref="navbar-menu"
-            className="fixed z-80 w-64 h-full mt-20 bg-gradient-to-b from-slate-800 to-white"
+            className="fixed z-50 w-64 h-full mt-20 bg-gradient-to-b from-slate-800 to-white"
             initial="hidden"
             animate="visible"
             exit="hidden"

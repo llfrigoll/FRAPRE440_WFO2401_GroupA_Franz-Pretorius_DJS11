@@ -16,7 +16,7 @@ export default function SearchBar({ onSearchTextChange }: SearchBarProps) {
     };
 
     return (
-        <div data-ref="search-bar" className="fixed right-16 pt-5 mb-auto z-10 border-1 border-solid border-red-500">
+        <div data-ref="search-bar" className="fixed right-16 pt-5 mb-auto z-50 border-1 border-solid border-red-500">
             <input
                 onChange={handleTextChange}
                 value={text}

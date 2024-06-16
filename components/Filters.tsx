@@ -73,7 +73,7 @@ export default function Filters({ onGenreChange, onSortChange }: FiltersProps) {
     return (
         <div
             data-ref="filters-container"
-            className="flex justify-between rounded-sm w-2/5 ml-auto mr-10 mt-10 px-6 py-2"
+            className="flex justify-between rounded-sm w-2/5 ml-auto mr-10 mt-10 px-6 py-2 z-20"
         >
             <button
                 onClick={() => handleSortChange("A-Z", (a, b) => a.title.localeCompare(b.title))}
