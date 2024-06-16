@@ -1,73 +1,100 @@
-import { useState, useEffect } from "react"
-import {Preview, Show, Season, Episode, Genre} from '../utils/interfaces'
-import { getAllPreviews, getGenres, getSinglePreview } from "../utils/Api"
-import LoadIcon from '../components/LoadIcon'
-import PodcastTile from '../components/PodcastTile'
-import Filters from '../components/Filters'
-import SearchBar from '../components/SearchBar'
+import { useState, useEffect, useCallback } from "react";
+import { Preview, Genre } from '../utils/interfaces';
+import { getAllPreviews, getGenres } from "../utils/Api";
+import LoadIcon from '../components/LoadIcon';
+import PodcastTile from '../components/PodcastTile';
+import Filters from '../components/Filters';
+import SearchBar from '../components/SearchBar';
 
 export default function Dashboard() {
-    const [previews, setPreviews] = useState<Preview[]>([])
-    const [genres, setGenres] = useState<Genre[]>([])
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState<any>(null)
-
-    function handlePreviews(previews: Preview[]) {
-        setPreviews(previews)
-    }
+    const [previews, setPreviews] = useState<Preview[]>([]);
+    const [filteredPreviews, setFilteredPreviews] = useState<Preview[]>([]);
+    const [genres, setGenres] = useState<Genre[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<any>(null);
+    const [searchText, setSearchText] = useState('');
+    const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
+    const [sortFunction, setSortFunction] = useState<(a: Preview, b: Preview) => number>(() => () => 0);
 
     useEffect(() => {
         async function loadPreviews() {
-            setLoading(true)
+            setLoading(true);
             try {
-                const previewData = await getAllPreviews()
-                setPreviews(previewData)
-                const genresData = await getGenres()
-                setGenres(genresData)
+                const previewData = await getAllPreviews();
+                setPreviews(previewData);
+                setFilteredPreviews(previewData);
+                const genresData = await getGenres();
+                setGenres(genresData);
             } catch (err: any) {
-                setError(err)
+                setError(err);
             } finally {
-                setLoading(false)
+                setLoading(false);
             }
         }
-        loadPreviews()
-    }, [])
+        loadPreviews();
+    }, []);
+
+    const applyFiltersAndSort = useCallback(() => {
+        let updatedPreviews = [...previews];
+
+        if (selectedGenre) {
+            const genre = genres.find(g => g.title.toLowerCase() === selectedGenre);
+            if (genre) {
+                updatedPreviews = updatedPreviews.filter(preview => genre.shows.includes(preview.id));
+            }
+        }
+
+        if (searchText) {
+            updatedPreviews = updatedPreviews.filter(preview =>
+                preview.title.toLowerCase().includes(searchText.toLowerCase())
+            );
+        }
+
+        updatedPreviews.sort(sortFunction);
+        setFilteredPreviews(updatedPreviews);
+    }, [previews, searchText, selectedGenre, sortFunction, genres]);
+
+    useEffect(() => {
+        applyFiltersAndSort()
+    }, [applyFiltersAndSort]);
+
+    const handleSearchTextChange = (text: string) => {
+        setSearchText(text);
+    };
+
+    const handleGenreChange = (genre: string | null) => {
+        setSelectedGenre(genre);
+    };
+
+    const handleSortChange = (sortFunc: (a: Preview, b: Preview) => number) => {
+        setSortFunction(() => sortFunc);
+    };
 
     if (loading) {
         return (
             <div data-ref="dashboard-container" className="pt-20">
                 <LoadIcon />
             </div>
-        )
-    }
-    
-    if (error) {
-        return <h1>There was an error: {error.message}</h1>
+        );
     }
 
-    
-    const previewTiles = previews.map(preview => {
-        let props = {
-            propsPreview: preview,
-            propsGenres: genres
-            
-        }
-            
-        return (
-            <PodcastTile {...props}/>
-        )
-        
-    })
-    
+    if (error) {
+        return <h1>There was an error: {error.message}</h1>;
+    }
+
+    const previewTiles = filteredPreviews.map(preview => (
+        <PodcastTile key={preview.id} propsPreview={preview} propsGenres={genres} />
+    ));
+
     return (
         <>
-            <SearchBar setState = {handlePreviews}/>
+            <SearchBar onSearchTextChange={handleSearchTextChange} />
             <div data-ref="dashboard-container" className="pt-20 bg-slate-300 transition-all">
-                <Filters setState = {handlePreviews}/>
-                <div data-ref="tile-container" className="grid grid-cols-5 gap-10  p-10">
-                    {previewTiles}
+                <Filters onGenreChange={handleGenreChange} onSortChange={handleSortChange} />
+                <div data-ref="tile-container" className="grid grid-cols-5 gap-10 p-10">
+                    {previewTiles.length === 0 ? <div className="col-span-5 mx-auto font-medium">No results found.</div> : previewTiles}
                 </div>
             </div>
         </>
-    )
+    );
 }
