@@ -12,7 +12,7 @@ interface PopUpProps {
 }
 
 interface OptionType {
-  value: string;
+  value: number;
   label: string;
 }
 
@@ -24,7 +24,8 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
   const [updatedString, setUpdatedString] = useState<string>('')
   const [description, setDescription] = useState<string>('')
   const [seasonNames, setSeasonNames] = useState<OptionType[]>([]);
-  const [selectedSeason, setSelectedSeason] = useState<string | null>(null)
+  const [selectedSeason, setSelectedSeason] = useState<number>(-1)
+  const [episodes, setEpisodes] = useState<Episode[]>([])
 
   const months = [
     "January", "February", "March", "April", "May", "June",
@@ -79,13 +80,24 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
   useEffect(() => {
     async function loadOptions() {
       const options = seasons.map(season => ({
-        value: season.season.toString(),
+        value: season.season,
         label: `Season ${season.season.toString()}`
       }))
       setSeasonNames(options)
     }
     loadOptions()
   }, [seasons])
+
+  useEffect(() => {
+    async function loadEpisodes() {
+      let localEpisodes: Episode[] = []
+      if(selectedSeason !== -1) {
+        localEpisodes = [...seasons[selectedSeason - 1].episodes]
+      }
+      setEpisodes(localEpisodes)
+    }
+    loadEpisodes()
+  }, [selectedSeason])
 
   
 
@@ -114,7 +126,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
   };
 
   const handleSeasonChange = (selectedOption: SingleValue<OptionType>) => {
-    setSelectedSeason(selectedOption ? selectedOption.value : null)
+    setSelectedSeason(selectedOption ? selectedOption.value : -1)
   };
 
   const propsColor = 'border-slate-400'
@@ -152,12 +164,19 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         <div className="col-span-1 bg-slate-600 rounded-lg">
           <button onClick={closeClickHandler} className="absolute top-2 right-4 font-medium text-slate-300 z-10">Close ✖</button>
           {loading && <LoadIcon iconColor ={propsColor}/>}
-          {!loading && <Select
-            styles={customStyles}
-            options={seasonNames}
-            isClearable={true}
-            placeholder="Season"
-            onChange={handleSeasonChange}/>}
+          {!loading && (
+            <div className="flex flex-col mt-10 border border-green-500 border-solid">
+              <div className="w-fit pl-4 border border-red-500 border-solid">
+                <Select
+                styles={customStyles}
+                options={seasonNames}
+                isClearable={true}
+                placeholder="Season"
+                onChange={handleSeasonChange}/>
+              </div>
+
+            </div>
+            )}
         </div>
       </motion.div>
     </AnimatePresence>
