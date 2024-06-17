@@ -104,6 +104,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
   useEffect(() => {
     async function loadEpisodes() {
       let localEpisodes: Episode[] = []
+      
       if(selectedSeason !== -1) {
         localEpisodes = [...seasons[selectedSeason - 1].episodes]
         setPopUpImage(seasons[selectedSeason - 1].image)
@@ -129,14 +130,18 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
   }, [selectedSeason])
 
 
-  useEffect(() => {
-    async function displayEpisode() {
-      
-    }
-    displayEpisode()
-  }, [activeEpisode])
+  let episodeEl = (<></>)
+  if(activeEpisode) {
+    episodeEl =
+    (
+      <>
+        <div className="flex flex-col">
 
-  
+        </div>
+      </>
+    )
+
+  }
 
   const closeClickHandler = () => {
     hidepopup();
@@ -164,6 +169,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
 
   const handleSeasonChange = (selectedOption: SingleValue<OptionType>) => {
     setSelectedSeason(selectedOption ? selectedOption.value : -1)
+    setActiveEpisode(null)
   };
 
 
@@ -185,7 +191,8 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
           ))}
         </div>
       </>
-    )}
+    )
+  }
 
   return (
     <AnimatePresence>
