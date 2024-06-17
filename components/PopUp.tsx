@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Episode, Preview, Season, Show } from '../utils/interfaces';
+import { Episode, Genre, Preview, Season, Show } from '../utils/interfaces';
 import { getGenres, getShow, getSinglePreview } from "../utils/Api";
 import { AnimatePresence, motion } from "framer-motion";
 import LoadIcon from "./LoadIcon";
@@ -11,9 +11,11 @@ interface PopUpProps {
 }
 
 export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
-  const [podcast, setPodcast] = useState<Show | null>(null)
+  const [podcast, setPodcast] = useState<Show | undefined>(undefined)
+  const [preview, setPreview] = useState<Preview | undefined>(undefined)
   const [seasons, setSeasons] = useState<Season[]>([])
   const [loading, setLoading] = useState(false)
+  const [allGenres, setAllGenres] = useState<Genre[] | undefined>(undefined)
   const [genreString, setGenreString] = useState<String | null>('')
 
   const popUpContainer = {
@@ -38,12 +40,16 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
       setLoading(true)
       const showData = await getShow(showId)
       setPodcast(showData)
+
       const previewData = await getSinglePreview(showId)
-      let allGenres = await getGenres()
-      if(previewData) {
-        const filteredGenres = allGenres.filter((genre) => podcast?.genres.map(genreId => genreId === genre.id))
-        const genreNames = filteredGenres.map(genre => genre.title)
-        genreNames.length > 1 ? setGenreString(genreNames?.join(', ')) : setGenreString(genreNames[0])
+      setPreview(previewData)
+
+      const allGenres = await getGenres()
+      setAllGenres(allGenres)
+
+      if(preview) {
+        const genreNames = preview.genres.map((genreId) => allGenres.find(g => Number(g.id) === genreId)?.title || '').filter(Boolean)
+        setGenreString(genreNames.join(', '))
       }
       if(podcast) {
         let allSeasons: Season[] = []
