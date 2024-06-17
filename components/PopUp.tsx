@@ -11,13 +11,17 @@ interface PopUpProps {
 }
 
 export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
-  const [podcast, setPodcast] = useState<Show | undefined>(undefined);
-  const [previews, setPreviews] = useState<Preview[]>([]);
-  const [activePreview, setActivePreview] = useState<Preview | undefined>(undefined);
+  const [podcast, setPodcast] = useState<Show | null>(null);
   const [seasons, setSeasons] = useState<Season[]>([]);
   const [loading, setLoading] = useState(false);
-  const [allGenres, setAllGenres] = useState<Genre[]>([]);
   const [genreString, setGenreString] = useState<string>('');
+  const [updatedString, setUpdatedString] = useState<string>('')
+  const [description, setDescription] = useState<string>('')
+
+  const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
 
   const popUpContainer = {
     visible: {
@@ -36,46 +40,33 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     },
   };
 
-  // Fetch show and previews
   useEffect(() => {
-    async function loadShowAndPreviews() {
-      setLoading(true);
+    async function loadShow() {
+      setLoading(true)
       const showData = await getShow(showId);
       setPodcast(showData);
-
-      const previewsData = await getAllPreviews();
-      setPreviews(previewsData);
-
-      const localPreviews = previewsData.filter(preview => preview.id === showId);
-      const preview = localPreviews[0];
-      setActivePreview(preview);
-
-      if (showData) {
-        setSeasons(showData.seasons);
-      }
-      setLoading(false);
-    }
-    loadShowAndPreviews();
-  }, [showId]);
-
-  // Fetch genres and update genre string
-  useEffect(() => {
-    async function loadGenres() {
-      setLoading(true)
-      const allGenres = await getGenres();
-      setAllGenres(allGenres);
-
-      if (activePreview && allGenres.length > 0) {
-        const genreNames = activePreview.genres.map(genreId => {
-          const genre = allGenres.find(genre => genre.id === genreId);
-          return genre ? genre.title : '';
-        }).filter(title => title); // Filter out any undefined values
-        setGenreString(genreNames.join(', '));
-      }
       setLoading(false)
     }
-    loadGenres();
-  }, [activePreview]);
+    loadShow();
+  }, [showId]);
+
+  useEffect(() => {
+    async function loadInfo() {
+      if (podcast) {
+        setSeasons(podcast.seasons);
+        podcast.genres ? setGenreString('Genres: ' + podcast.genres.join(', ')) : setGenreString('Genres: 🗿')
+
+        const updatedDate = new Date(podcast.updated)
+        const updated = `Last updated: ${updatedDate.getDate()} ${months[updatedDate.getMonth()]} ${updatedDate.getFullYear()}`
+        setUpdatedString(updated)
+
+        const descriptionString = `Description: ${podcast.description}`
+        setDescription(descriptionString)
+
+      }
+    }
+    loadInfo()
+  },[podcast])
 
   const closeClickHandler = () => {
     hidepopup();
@@ -91,20 +82,21 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         exit="hidden"
         variants={popUpContainer}
       >
-        <div className="flex flex-col col-span-2 bg-white rounded-lg w-full">
-          <button className="ml-2 mt-2 mr-auto font-medium">{'< Back'}</button>
+        <button className="fixed pl-4 pt-2 font-medium">{'< Back'}</button>
+        <div className="flex flex-col col-span-2 bg-white rounded-lg w-full overflow-auto">
           {loading && <LoadIcon />}
+          <div className="absolute w-1/4 left-52 h-1/3 border-red-500 border border-solid"></div>
           {!loading && (
-            <div className="col-span-1 w-full ml-4 mt-2 p-2">
-              <div className="flex flex-row w-full">
-                <img src={podcast?.image} className="rounded-md w-1/4" alt={podcast?.title} />
-                <div className="flex flex-col w-3/4 border border-red-500 border-solid">
-                  <h1 className="text-slate-800 font-bold text-3xl pl-4 w-3/4 text-wrap">{podcast?.title}</h1>
-                  <p>Genres: {genreString}</p>
-                </div>
+            <div className="col-span-2 w-full pl-6 pt-12 p-2">
+              <img src={podcast?.image} className="fixed rounded-md h-1/4 col-span-1" alt={podcast?.title} />
+              <div className="fixed flex flex-col col-span-1 w-3/4 pl-44">
+                <h1 className="text-slate-800 font-bold text-3xl pl-4 w-3/4 text-wrap">{podcast?.title}</h1>
+                <p className="pl-4">{genreString}</p>
+                <p className="pl-4">{updatedString}</p>
               </div>
             </div>
           )}
+          <p className="col-span-2 pl-6 pt-44 pr-8">{description}</p>
         </div>
         <div className="col-span-1 bg-white rounded-lg relative">
           <button onClick={closeClickHandler} className="absolute top-2 right-4 font-medium text-slate-800">Close x</button>
