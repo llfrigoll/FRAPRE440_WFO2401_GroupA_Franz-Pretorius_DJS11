@@ -82,24 +82,29 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         exit="hidden"
         variants={popUpContainer}
       >
-        <button className="fixed pl-4 pt-2 font-medium">{'< Back'}</button>
-        <div className="flex flex-col col-span-2 bg-white rounded-lg w-full overflow-auto">
+        <button className="fixed pl-4 pt-2 font-medium text-slate-300 z-10">{'< Back'}</button>
+        <div className="flex flex-col col-span-2 bg-slate-800 rounded-lg w-full">
           {loading && <LoadIcon />}
-          <div className="absolute w-1/4 left-52 h-1/3 border-red-500 border border-solid"></div>
+          <div className="absolute top-10 left-2 right-96 mr-12 h-48 rounded-xl bg-slate-800"></div>
           {!loading && (
             <div className="col-span-2 w-full pl-6 pt-12 p-2">
-              <img src={podcast?.image} className="fixed rounded-md h-1/4 col-span-1" alt={podcast?.title} />
+              <img src={podcast?.image} className="fixed rounded-md h-1/4 col-span-1 z-10" alt={podcast?.title} />
               <div className="fixed flex flex-col col-span-1 w-3/4 pl-44">
-                <h1 className="text-slate-800 font-bold text-3xl pl-4 w-3/4 text-wrap">{podcast?.title}</h1>
-                <p className="pl-4">{genreString}</p>
-                <p className="pl-4">{updatedString}</p>
+                <h1 className="text-slate-300 font-semibold text-4xl pl-4 mb-2 w-3/4 text-wrap">{podcast?.title}</h1>
+                <p className="pl-4 mb-1 text-slate-300">{genreString}</p>
+                <p className="pl-4 mb-1 text-slate-300">{updatedString}</p>
+                <p className="pl-4 mb-1 text-slate-300">{`Seasons: ${seasons.length}`}</p>
               </div>
             </div>
           )}
-          <p className="col-span-2 pl-6 pt-44 pr-8">{description}</p>
+          <div className="col-span-2 pl-6 pt-44 pr-8 h-96">
+            <div className="overflow-y-auto">
+              <p className="h-48 mt-4 pr-4 text-sm text-slate-300">{description}</p>
+            </div>
+          </div>
         </div>
-        <div className="col-span-1 bg-white rounded-lg relative">
-          <button onClick={closeClickHandler} className="absolute top-2 right-4 font-medium text-slate-800">Close x</button>
+        <div className="col-span-1 bg-slate-600 rounded-lg relative">
+          <button onClick={closeClickHandler} className="absolute top-2 right-4 font-medium text-slate-300">Close x</button>
           {loading && <LoadIcon />}
         </div>
       </motion.div>
