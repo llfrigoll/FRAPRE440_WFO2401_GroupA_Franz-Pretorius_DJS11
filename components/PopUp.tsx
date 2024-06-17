@@ -29,7 +29,8 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
   const [popUpImage, setPopUpImage] = useState<string>('')
   const [popUpTitle, setPopUpTitle] = useState<string>('')
   const [seasonString, setSeasonString] = useState<string>('')
-  const [validSeason, setValidSeason] =useState(false)
+  const [validSeason, setValidSeason] = useState(false)
+  const [activeEpisode, setActiveEpisode] = useState<Episode | null>(null)
 
   const months = [
     "January", "February", "March", "April", "May", "June",
@@ -129,12 +130,11 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
 
 
   useEffect(() => {
-    async function displayEpisodes() {
-      
+    async function displayEpisode() {
       
     }
-    displayEpisodes()
-  }, [episodes])
+    displayEpisode()
+  }, [activeEpisode])
 
   
 
@@ -166,6 +166,11 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     setSelectedSeason(selectedOption ? selectedOption.value : -1)
   };
 
+
+  const handleEpisodeClick = (activeEpisode: Episode) => {
+    setActiveEpisode(activeEpisode)
+  }
+
   const propsColor = 'border-slate-400'
 
   let episodeButtons = (<></>)
@@ -176,7 +181,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         <h1 className="text-slate-300 text-3xl font-semibold self-center py-6">Episodes</h1>
         <div className="w-3/4 self-center grid grid-cols-2 gap-2">
           {episodes.map(episode => (
-            <button key={episode.episode} className="w-fit text-slate-300 py-1 mx-auto z-10 hover:text-slate-800">Episode {episode.episode}</button>
+            <button key={episode.episode} onClick={() => handleEpisodeClick(episode)} className="w-fit text-slate-300 py-1 mx-auto z-10 hover:text-slate-800">Episode {episode.episode}</button>
           ))}
         </div>
       </>
