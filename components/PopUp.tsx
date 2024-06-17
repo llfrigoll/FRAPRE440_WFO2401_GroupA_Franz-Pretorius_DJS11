@@ -3,6 +3,7 @@ import { Episode, Genre, Preview, Season, Show } from '../utils/interfaces';
 import { getAllPreviews, getGenres, getShow } from "../utils/Api";
 import { AnimatePresence, motion } from "framer-motion";
 import LoadIcon from "./LoadIcon";
+import Select from "react-select/base";
 
 interface PopUpProps {
   showId: string;
@@ -73,6 +74,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     closeModal(false);
   };
 
+  const propsColor = 'border-slate-400'
   return (
     <AnimatePresence>
       <motion.div
@@ -84,7 +86,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
       >
         <button className="fixed pl-4 pt-2 font-medium text-slate-300 z-10">{'< Back'}</button>
         <div className="flex flex-col col-span-2 bg-slate-800 rounded-lg w-full">
-          {loading && <LoadIcon />}
+          {loading && <LoadIcon iconColor ={propsColor}/>}
           <div className="absolute top-10 left-2 right-96 mr-12 h-48 rounded-xl bg-slate-800"></div>
           {!loading && (
             <div className="col-span-2 w-full pl-6 pt-12 p-2">
@@ -103,9 +105,16 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
             </div>
           </div>
         </div>
-        <div className="col-span-1 bg-slate-600 rounded-lg relative">
-          <button onClick={closeClickHandler} className="absolute top-2 right-4 font-medium text-slate-300">Close x</button>
-          {loading && <LoadIcon />}
+        <div className="col-span-1 bg-slate-600 rounded-lg">
+          <button onClick={closeClickHandler} className="absolute top-2 right-4 font-medium text-slate-300">Close ✖</button>
+          {loading && <LoadIcon iconColor ={propsColor}/>}
+          {/* {!loading && <Select
+                styles={customStyles}
+                options={genreNames}
+                isClearable={true}
+                placeholder="Genres"
+                onChange={handleGenreChange}
+            />} */}
         </div>
       </motion.div>
     </AnimatePresence>

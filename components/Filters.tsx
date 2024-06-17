@@ -62,10 +62,11 @@ export default function Filters({ onGenreChange, onSortChange }: FiltersProps) {
         onSortChange(sortFunc);
     };
 
+    const propsColor = 'border-slate-800'
     if (loading) {
         return (
             <div data-ref="filters-container" className="pt-20">
-                <LoadIcon />
+                <LoadIcon iconColor ={propsColor}/>
             </div>
         );
     }

@@ -76,10 +76,11 @@ export default function Dashboard({ onTileClick, hidepopup, handleNav }: Dashboa
         setSortFunction(() => sortFunc);
     };
 
+    const propsColor = 'border-slate-800'
     if (loading) {
         return (
             <div data-ref="dashboard-container" className="pt-20">
-                <LoadIcon />
+                <LoadIcon iconColor ={propsColor}/>
             </div>
         );
     }
