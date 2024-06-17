@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Episode, Preview, Season, Show } from '../utils/interfaces';
-import { getShow } from "../utils/Api";
+import { getGenres, getShow, getSinglePreview } from "../utils/Api";
 import { AnimatePresence, motion } from "framer-motion";
 import LoadIcon from "./LoadIcon";
 
@@ -14,6 +14,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
   const [podcast, setPodcast] = useState<Show | null>(null)
   const [seasons, setSeasons] = useState<Season[]>([])
   const [loading, setLoading] = useState(false)
+  const [genreString, setGenreString] = useState<String | null>('')
 
   const popUpContainer = {
     visible: {
@@ -37,6 +38,13 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
       setLoading(true)
       const showData = await getShow(showId)
       setPodcast(showData)
+      const previewData = await getSinglePreview(showId)
+      let allGenres = await getGenres()
+      if(previewData) {
+        const filteredGenres = allGenres.filter((genre) => podcast?.genres.map(genreId => genreId === genre.id))
+        const genreNames = filteredGenres.map(genre => genre.title)
+        genreNames.length > 1 ? setGenreString(genreNames?.join(', ')) : setGenreString(genreNames[0])
+      }
       if(podcast) {
         let allSeasons: Season[] = []
         podcast.seasons.forEach(season => {
@@ -55,7 +63,6 @@ const closeClickHandler = () => {
 }
 
 
-
   
   return (
     <AnimatePresence>
@@ -71,7 +78,10 @@ const closeClickHandler = () => {
           <div className="col-span-1 w-full ml-4 mt-2 p-2">
             <div className="flex flex-row w-full">
               <img src={podcast?.image} className="rounded-md w-1/4" alt={podcast?.title} />
-              <h1 className="text-slate-800 font-bold text-3xl pl-4 w-3/4 text-wrap">{podcast?.title}</h1>
+              <div className="flex flex-col w-3/4 border border-red-500 border-solid">
+                <h1 className="text-slate-800 font-bold text-3xl pl-4 w-3/4 text-wrap">{podcast?.title}</h1>
+                <p>Genres: {genreString}</p>
+              </div>
             </div>
           </div>
         </div>

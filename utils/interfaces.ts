@@ -14,7 +14,7 @@ export interface Show {
     description: string;
     seasons: Season[];
     image: string;
-    genres: number[];
+    genres: string[];
     updated: Date;
 }
 
