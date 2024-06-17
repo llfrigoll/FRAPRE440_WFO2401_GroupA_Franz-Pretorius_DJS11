@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Episode, Preview, Season, Show } from '../utils/interfaces';
 import { getShow } from "../utils/Api";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface PopUpProps {
   showId: string;
@@ -46,13 +47,20 @@ export default function PopUp({ showId }: PopUpProps) {
 
   
   return (
-    <div className="fixed top-32 left-48  w-3/4 h-2/3 bg-transparent z-50 grid grid-cols-3 gap-3">
-      <div className="col-span-2 bg-white rounded-lg">
-        <button className="ml-2 mt-2 font-medium">{'<'}</button>
-      </div>
-      <div className="col-span-1 bg-white rounded-lg">
-      
-      </div>
-    </div>
+    <AnimatePresence>
+      (<motion.div
+      className="fixed top-32 left-48  w-3/4 h-2/3 bg-transparent z-50 grid grid-cols-3 gap-3"
+      initial="hidden"
+      animate="visible"
+      exit="hidden"
+      variants={popUpContainer}>
+        <div className="col-span-2 bg-white rounded-lg">
+          <button className="ml-2 mt-2 font-medium">{'<'}</button>
+        </div>
+        <div className="col-span-1 bg-white rounded-lg">
+        
+        </div>
+      </motion.div>)
+    </AnimatePresence>
   );
 }
