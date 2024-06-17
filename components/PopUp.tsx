@@ -17,7 +17,7 @@ interface OptionType {
 }
 
 export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
-  const [podcast, setPodcast] = useState<Show | null>(null);
+  const [podcast, setPodcast] = useState<Show | undefined>(undefined);
   const [seasons, setSeasons] = useState<Season[]>([]);
   const [loading, setLoading] = useState(false);
   const [genreString, setGenreString] = useState<string>('');
@@ -26,6 +26,9 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
   const [seasonNames, setSeasonNames] = useState<OptionType[]>([]);
   const [selectedSeason, setSelectedSeason] = useState<number>(-1)
   const [episodes, setEpisodes] = useState<Episode[]>([])
+  const [popUpImage, setPopUpImage] = useState<string>('')
+  const [popUpTitle, setPopUpTitle] = useState<string>('')
+  const [seasonString, setSeasonString] = useState<string>('')
 
   const months = [
     "January", "February", "March", "April", "May", "June",
@@ -65,6 +68,12 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         setSeasons(podcast.seasons);
         podcast.genres ? setGenreString('Genres: ' + podcast.genres.join(', ')) : setGenreString('Genres: 🗿')
 
+        const titleString = `${podcast.title}`
+        setPopUpTitle(titleString)
+
+        const imageString = `${podcast.image}`
+        setPopUpImage(imageString)
+
         const updatedDate = new Date(podcast.updated)
         const updated = `Last updated: ${updatedDate.getDate()} ${months[updatedDate.getMonth()]} ${updatedDate.getFullYear()}`
         setUpdatedString(updated)
@@ -84,6 +93,8 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         label: `Season ${season.season.toString()}`
       }))
       setSeasonNames(options)
+      const seasonStringLocal = `Seasons: ${seasons.length}`
+          setSeasonString(seasonStringLocal)
     }
     loadOptions()
   }, [seasons])
@@ -93,11 +104,34 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
       let localEpisodes: Episode[] = []
       if(selectedSeason !== -1) {
         localEpisodes = [...seasons[selectedSeason - 1].episodes]
+        setPopUpImage(seasons[selectedSeason - 1].image)
+        setPopUpTitle(`${podcast?.title}: Season ${selectedSeason}`)
+        setDescription('')
+        setSeasonString('')
+        
+      }else {
+        localEpisodes = []
+        if(podcast) {
+          setPopUpImage(podcast.image)
+          setPopUpTitle(podcast.title)
+          setDescription(podcast.description)
+          const seasonStringLocal = `Seasons: ${seasons.length}`
+          setSeasonString(seasonStringLocal)
+        }
       }
       setEpisodes(localEpisodes)
     }
     loadEpisodes()
   }, [selectedSeason])
+
+
+  useEffect(() => {
+    async function displayEpisodes() {
+      
+      
+    }
+    displayEpisodes()
+  }, [episodes])
 
   
 
@@ -131,6 +165,10 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
 
   const propsColor = 'border-slate-400'
 
+  const episodeButtons = episodes.map(episode => (
+    <button key={episode.episode} className="text-slate-300 pl-6  z-10 border-purple-400 border border-solid">{episode.episode}</button>
+  ))
+
   return (
     <AnimatePresence>
       <motion.div
@@ -146,12 +184,12 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
           <div className="absolute top-10 left-2 right-96 mr-12 h-48 rounded-xl bg-slate-800"></div>
           {!loading && (
             <div className="col-span-2 w-full pl-6 pt-12 p-2">
-              <img src={podcast?.image} className="fixed rounded-md h-1/4 col-span-1 z-10" alt={podcast?.title} />
-              <div className="fixed flex flex-col col-span-1 w-3/4 pl-44">
-                <h1 className="text-slate-300 font-semibold text-4xl pl-4 mb-2 w-3/4 text-wrap">{podcast?.title}</h1>
-                <p className="pl-4 mb-1 text-slate-300">{genreString}</p>
-                <p className="pl-4 mb-1 text-slate-300">{updatedString}</p>
-                <p className="pl-4 mb-1 text-slate-300">{`Seasons: ${seasons.length}`}</p>
+              <img src={popUpImage} className="fixed rounded-md h-1/4 col-span-1 z-10" alt={popUpTitle} />
+              <div className="fixed flex flex-col col-span-1 w-1/3 ml-44">
+                <h1 className="pl-4 mb-2 text-slate-300 font-semibold text-4xl text-wrap">{popUpTitle}</h1>
+                <p className="pl-4 mb-1 text-slate-300 text-wrap">{genreString}</p>
+                <p className="pl-4 mb-1 text-slate-300 text-wrap">{updatedString}</p>
+                <p className="pl-4 mb-1 text-slate-300 text-wrap">{seasonString}</p>
               </div>
             </div>
           )}
@@ -165,16 +203,19 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
           <button onClick={closeClickHandler} className="absolute top-2 right-4 font-medium text-slate-300 z-10">Close ✖</button>
           {loading && <LoadIcon iconColor ={propsColor}/>}
           {!loading && (
-            <div className="flex flex-col mt-10 border border-green-500 border-solid">
-              <div className="w-fit pl-4 border border-red-500 border-solid">
+            <div className="flex flex-col mt-10 border border-red-500 border-solid">
+              <div className="w-fit pl-6 border border-green-500 border-solid">
                 <Select
                 styles={customStyles}
                 options={seasonNames}
                 isClearable={true}
-                placeholder="Season"
+                placeholder="Seasons"
                 onChange={handleSeasonChange}/>
               </div>
-
+              <div className="flex flex-col items-start">
+                <h1 className="font-semibold pl-6 py-2 border border-green-500 border-solid">Episodes</h1>
+                {episodeButtons}
+              </div>
             </div>
             )}
         </div>
