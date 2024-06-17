@@ -29,6 +29,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
   const [popUpImage, setPopUpImage] = useState<string>('')
   const [popUpTitle, setPopUpTitle] = useState<string>('')
   const [seasonString, setSeasonString] = useState<string>('')
+  const [validSeason, setValidSeason] =useState(false)
 
   const months = [
     "January", "February", "March", "April", "May", "June",
@@ -94,7 +95,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
       }))
       setSeasonNames(options)
       const seasonStringLocal = `Seasons: ${seasons.length}`
-          setSeasonString(seasonStringLocal)
+      setSeasonString(seasonStringLocal)
     }
     loadOptions()
   }, [seasons])
@@ -108,6 +109,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         setPopUpTitle(`${podcast?.title}: Season ${selectedSeason}`)
         setDescription('')
         setSeasonString('')
+        setValidSeason(true)
         
       }else {
         localEpisodes = []
@@ -117,6 +119,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
           setDescription(podcast.description)
           const seasonStringLocal = `Seasons: ${seasons.length}`
           setSeasonString(seasonStringLocal)
+          setValidSeason(false)
         }
       }
       setEpisodes(localEpisodes)
@@ -165,9 +168,17 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
 
   const propsColor = 'border-slate-400'
 
-  const episodeButtons = episodes.map(episode => (
-    <button key={episode.episode} className="text-slate-300 pl-6  z-10 border-purple-400 border border-solid">{episode.episode}</button>
-  ))
+  let episodeButtons = (<></>)
+  if(validSeason) {
+    episodeButtons =
+    (
+      <>
+        <h1 className="text-slate-300 text-2xl font-semibold pl-6 py-2 border border-green-500 border-solid">Episodes</h1>
+          {episodes.map(episode => (
+            <button key={episode.episode} className="w-40 text-slate-300 text-left ml-6 mb-2 px-2 py-1 z-10 border-purple-400 border border-solid">Episode {episode.episode}</button>
+          ))}
+      </>
+    )}
 
   return (
     <AnimatePresence>
@@ -204,7 +215,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
           {loading && <LoadIcon iconColor ={propsColor}/>}
           {!loading && (
             <div className="flex flex-col mt-10 border border-red-500 border-solid">
-              <div className="w-fit pl-6 border border-green-500 border-solid">
+              <div className="w-fit pl-6 border border-green-500 border-solid z-20">
                 <Select
                 styles={customStyles}
                 options={seasonNames}
@@ -213,7 +224,6 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
                 onChange={handleSeasonChange}/>
               </div>
               <div className="flex flex-col items-start">
-                <h1 className="font-semibold pl-6 py-2 border border-green-500 border-solid">Episodes</h1>
                 {episodeButtons}
               </div>
             </div>
