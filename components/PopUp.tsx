@@ -5,9 +5,11 @@ import { AnimatePresence, motion } from "framer-motion";
 
 interface PopUpProps {
   showId: string;
+  hidepopup: () => void
+  closeModal: (value: boolean) => void
 }
 
-export default function PopUp({ showId }: PopUpProps) {
+export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
   const [podcast, setPodcast] = useState<Show | null>(null)
   const [seasons, setSeasons] = useState<Season[]>([])
 
@@ -43,7 +45,10 @@ export default function PopUp({ showId }: PopUpProps) {
     loadShow();
 }, []);
 
-
+const closeClickHandler = () => {
+  hidepopup()
+  closeModal(false)
+}
 
   
   return (
@@ -55,7 +60,7 @@ export default function PopUp({ showId }: PopUpProps) {
       exit="hidden"
       variants={popUpContainer}>
         <div className="col-span-2 bg-white rounded-lg">
-          <button className="ml-2 mt-2 font-medium">{'<'}</button>
+          <button onClick={closeClickHandler} className="ml-2 mt-2 font-medium">{'<'}</button>
         </div>
         <div className="col-span-1 bg-white rounded-lg">
         

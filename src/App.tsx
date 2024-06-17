@@ -34,7 +34,7 @@ export default function App() {
       <Header />
       <Navbar handleNav={navHandler} isActive={navActive} hidepopup={hidePopUp}/>
       <Dashboard onTileClick={showPopUp} hidepopup={hidePopUp} handleNav={navHandler}/>
-      {popUpActive && currentShow && <PopUp showId={currentShow.id} />}
+      {popUpActive && currentShow && <PopUp showId={currentShow.id} hidepopup={hidePopUp} closeModal={setModalActive}/>}
     </div>
   );
 }

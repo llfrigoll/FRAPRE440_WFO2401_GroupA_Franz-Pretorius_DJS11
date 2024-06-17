@@ -22,10 +22,14 @@ export default function SearchBar({ onSearchTextChange, hidepopup, handleNav }: 
         handleNav(false)
     }
 
+    const closeClickHandler = () => {
+        setText('')
+    }
+
     return (
-        <div data-ref="search-bar" className="fixed right-16 pt-5 mb-auto z-50 border-1 border-solid border-red-500">
+        <div data-ref="search-bar" className="fixed right-16 pt-5 mb-auto z-50">
             <input
-            onFocus={focusHandler}
+                onFocus={focusHandler}
                 onChange={handleTextChange}
                 value={text}
                 type="text"
@@ -33,6 +37,7 @@ export default function SearchBar({ onSearchTextChange, hidepopup, handleNav }: 
                 placeholder="Search"
                 className="absolute p-2 pr-10 right-0 bg-slate-600 placeholder-slate-300 rounded-2xl text-slate-300 focus:outline focus:outline-2 focus:outline-slate-300"
             />
+            <button onClick={closeClickHandler} className="font-medium relative mt-2 mr-4 text-slate-300">x</button>
         </div>
     );
 }
