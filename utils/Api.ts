@@ -29,15 +29,6 @@ export async function getShow(showId: string) {
         return podcast
 }
 
-export async function getSinglePreview(showId: string) {
-    const previews: Preview[] = await getAllPreviews()
-    const preview = previews.find(preview => {
-        preview.id === showId
-    })
-
-    return preview
-}
-
 export async function getSeason(showId: string, seasonNum: number) {
     const response = await fetch(`https://podcast-api.netlify.app/id/${showId}`)
     if (!response.ok) {

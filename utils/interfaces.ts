@@ -33,7 +33,7 @@ export interface Episode {
 }
 
 export interface Genre {
-    id: string;
+    id: number;
     title: string;
     description: string;
     shows: string[]
