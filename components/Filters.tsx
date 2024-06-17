@@ -17,7 +17,6 @@ interface FiltersProps {
 export default function Filters({ onGenreChange, onSortChange }: FiltersProps) {
     const [genreNames, setGenreNames] = useState<OptionType[]>([]);
     const [loading, setLoading] = useState(false);
-    const [selectedGenre, setSelectedGenre] = useState<OptionType | null>(null);
     const [selectedSort, setSelectedSort] = useState<string | null>(null);
 
     useEffect(() => {
@@ -43,17 +42,18 @@ export default function Filters({ onGenreChange, onSortChange }: FiltersProps) {
             width: 200,
             '&:hover': {
                 border: 'none',
+                color: "rgb(107, 114, 128)",
+                cursor: "pointer",
             },
         }),
         placeholder: (provided) => ({
             ...provided,
             color: "rgb(30,41,59)",
-            fontWeight: 500
+            fontWeight: 500,
         })
     };
 
     const handleGenreChange = (selectedOption: SingleValue<OptionType>) => {
-        setSelectedGenre(selectedOption);
         onGenreChange(selectedOption ? selectedOption.value : null);
     };
 

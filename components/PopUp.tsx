@@ -3,12 +3,17 @@ import { Episode, Genre, Preview, Season, Show } from '../utils/interfaces';
 import { getAllPreviews, getGenres, getShow } from "../utils/Api";
 import { AnimatePresence, motion } from "framer-motion";
 import LoadIcon from "./LoadIcon";
-import Select from "react-select/base";
+import Select, { StylesConfig, SingleValue } from 'react-select'
 
 interface PopUpProps {
   showId: string;
   hidepopup: () => void;
   closeModal: (value: boolean) => void;
+}
+
+interface OptionType {
+  value: string;
+  label: string;
 }
 
 export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
@@ -18,6 +23,8 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
   const [genreString, setGenreString] = useState<string>('');
   const [updatedString, setUpdatedString] = useState<string>('')
   const [description, setDescription] = useState<string>('')
+  const [seasonNames, setSeasonNames] = useState<OptionType[]>([]);
+  const [selectedSeason, setSelectedSeason] = useState<string | null>(null)
 
   const months = [
     "January", "February", "March", "April", "May", "June",
@@ -69,12 +76,49 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     loadInfo()
   },[podcast])
 
+  useEffect(() => {
+    async function loadOptions() {
+      const options = seasons.map(season => ({
+        value: season.season.toString(),
+        label: `Season ${season.season.toString()}`
+      }))
+      setSeasonNames(options)
+    }
+    loadOptions()
+  }, [seasons])
+
+  
+
   const closeClickHandler = () => {
     hidepopup();
     closeModal(false);
   };
 
+  const customStyles: StylesConfig<OptionType, false> = {
+    control: (provided) => ({
+        ...provided,
+        border: 'none',
+        boxShadow: 'none',
+        width: 200,
+        '&:hover': {
+            border: 'none',
+            color: "rgb(107, 114, 128)",
+            cursor: "pointer",
+        },
+    }),
+    placeholder: (provided) => ({
+        ...provided,
+        color: "rgb(30,41,59)",
+        fontWeight: 500,
+    })
+  };
+
+  const handleSeasonChange = (selectedOption: SingleValue<OptionType>) => {
+    setSelectedSeason(selectedOption ? selectedOption.value : null)
+  };
+
   const propsColor = 'border-slate-400'
+
   return (
     <AnimatePresence>
       <motion.div
@@ -106,15 +150,14 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
           </div>
         </div>
         <div className="col-span-1 bg-slate-600 rounded-lg">
-          <button onClick={closeClickHandler} className="absolute top-2 right-4 font-medium text-slate-300">Close ✖</button>
+          <button onClick={closeClickHandler} className="absolute top-2 right-4 font-medium text-slate-300 z-10">Close ✖</button>
           {loading && <LoadIcon iconColor ={propsColor}/>}
-          {/* {!loading && <Select
-                styles={customStyles}
-                options={genreNames}
-                isClearable={true}
-                placeholder="Genres"
-                onChange={handleGenreChange}
-            />} */}
+          {!loading && <Select
+            styles={customStyles}
+            options={seasonNames}
+            isClearable={true}
+            placeholder="Season"
+            onChange={handleSeasonChange}/>}
         </div>
       </motion.div>
     </AnimatePresence>
