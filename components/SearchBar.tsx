@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 
 interface SearchBarProps {
     onSearchTextChange: (text: string) => void;
+    hidepopup: () => void;
+    handleNav: (value: boolean) => void
 }
 
-export default function SearchBar({ onSearchTextChange }: SearchBarProps) {
+export default function SearchBar({ onSearchTextChange, hidepopup, handleNav }: SearchBarProps) {
     const [text, setText] = useState('');
 
     useEffect(() => {
@@ -15,9 +17,15 @@ export default function SearchBar({ onSearchTextChange }: SearchBarProps) {
         setText(event.target.value);
     };
 
+    const focusHandler = () => {
+        hidepopup()
+        handleNav(false)
+    }
+
     return (
         <div data-ref="search-bar" className="fixed right-16 pt-5 mb-auto z-50 border-1 border-solid border-red-500">
             <input
+            onFocus={focusHandler}
                 onChange={handleTextChange}
                 value={text}
                 type="text"

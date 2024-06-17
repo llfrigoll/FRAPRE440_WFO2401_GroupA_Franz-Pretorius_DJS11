@@ -26,15 +26,14 @@ export default function App() {
   const hidePopUp = () => {
     setPopUpActive(false);
     setCurrentShow(null);
-    setModalActive(false)
   };
 
   return (
     <div data-ref="app-container" className="relative">
       {modalActive && <Modal handleNav={navHandler} hidepopup={hidePopUp}/>}
       <Header />
-      <Navbar handleNav={navHandler} isActive={navActive} />
-      <Dashboard onTileClick={showPopUp} />
+      <Navbar handleNav={navHandler} isActive={navActive} hidepopup={hidePopUp}/>
+      <Dashboard onTileClick={showPopUp} hidepopup={hidePopUp} handleNav={navHandler}/>
       {popUpActive && currentShow && <PopUp showId={currentShow.id} />}
     </div>
   );

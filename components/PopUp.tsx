@@ -10,6 +10,23 @@ export default function PopUp({ showId }: PopUpProps) {
   const [podcast, setPodcast] = useState<Show | null>(null)
   const [seasons, setSeasons] = useState<Season[]>([])
 
+  const popUpContainer = {
+    visible: {
+      opacity: 1,
+      transition: {
+        x: { velocity: 100 },
+        duration: 0.3,
+      },
+    },
+    hidden: {
+      opacity: 0,
+      transition: {
+        x: { velocity: 100 },
+        duration: 0.3,
+      },
+    },
+  };
+
   useEffect(() => {
     async function loadShow() {
       const showData = await getShow(showId)
@@ -27,11 +44,15 @@ export default function PopUp({ showId }: PopUpProps) {
 
 
 
-
+  
   return (
-    <div className="fixed top-1/4 left-1/4 w-1/2 h-1/2 bg-white z-50 grid grid-cols-2">
-      <h1>{podcast?.title}</h1>
-      {/* Add more details as needed */}
+    <div className="fixed top-32 left-48  w-3/4 h-2/3 bg-transparent z-50 grid grid-cols-3 gap-3">
+      <div className="col-span-2 bg-white rounded-lg">
+        <button className="ml-2 mt-2 font-medium">{'<'}</button>
+      </div>
+      <div className="col-span-1 bg-white rounded-lg">
+      
+      </div>
     </div>
   );
 }

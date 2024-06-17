@@ -8,9 +8,11 @@ import SearchBar from '../components/SearchBar';
 
 interface DashboardProps {
     onTileClick: (show: Preview) => void;
+    hidepopup: () => void;
+    handleNav: (value: boolean) => void
   }
 
-export default function Dashboard({ onTileClick }: DashboardProps) {
+export default function Dashboard({ onTileClick, hidepopup, handleNav }: DashboardProps) {
     const [previews, setPreviews] = useState<Preview[]>([]);
     const [filteredPreviews, setFilteredPreviews] = useState<Preview[]>([]);
     const [genres, setGenres] = useState<Genre[]>([]);
@@ -92,7 +94,7 @@ export default function Dashboard({ onTileClick }: DashboardProps) {
 
     return (
         <>
-            <SearchBar onSearchTextChange={handleSearchTextChange} />
+            <SearchBar onSearchTextChange={handleSearchTextChange} hidepopup={hidepopup} handleNav={handleNav}/>
             <div data-ref="dashboard-container" className="pt-20 bg-slate-300 transition-all">
                 <Filters onGenreChange={handleGenreChange} onSortChange={handleSortChange} />
                 <div data-ref="tile-container" className="grid grid-cols-5 gap-10 p-10">

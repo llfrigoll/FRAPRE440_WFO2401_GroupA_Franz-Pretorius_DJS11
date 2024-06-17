@@ -5,12 +5,14 @@ import { motion, AnimatePresence } from "framer-motion";
 interface NavbarProps {
   handleNav: (value: boolean) => void;
   isActive: boolean;
+  hidepopup: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ handleNav, isActive }) => {
+const Navbar: React.FC<NavbarProps> = ({ handleNav, isActive, hidepopup }) => {
 
   const handleToggle = () => {
     handleNav(!isActive);
+    hidepopup()
   };
 
   const navContainer = {
