@@ -4,6 +4,8 @@ import { getAllPreviews, getGenres, getShow } from "../utils/Api";
 import { AnimatePresence, motion } from "framer-motion";
 import LoadIcon from "./LoadIcon";
 import Select, { StylesConfig, SingleValue } from 'react-select'
+import AudioPlayer from 'react-h5-audio-player';
+import 'react-h5-audio-player/lib/styles.css';
 
 interface PopUpProps {
   showId: string;
@@ -129,18 +131,28 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     loadEpisodes()
   }, [selectedSeason])
 
+  const favouritesBtnHover = () => {
+
+  }
+
 
   let episodeEl = (<></>)
   if(activeEpisode) {
     episodeEl =
     (
       <>
-        <div className="flex flex-col">
-
+        <div className="w-full flex flex-col border-green-500 border border-solid h-48">
+          <div className="flex flex-row">
+            <button onMouseOver={() => favouritesBtnHover()} className="text-4xl text-red-500 h-fit border border-solid border-purple-500">♡</button>
+            <h1 className="text-xl mt-1 mb-2 border border-solid border-purple-500">1. {activeEpisode.title}</h1>
+          </div>
+          <p>{activeEpisode.description}</p> 
+          <AudioPlayer
+            src={activeEpisode.file}
+          />
         </div>
       </>
     )
-
   }
 
   const closeClickHandler = () => {
@@ -220,7 +232,8 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
           )}
           <div className="col-span-2 pl-6 pt-44 pr-8 h-96">
             <div className="overflow-y-auto">
-              <p className="h-48 mt-4 pr-4 text-sm text-slate-300">{description}</p>
+              {!activeEpisode && <p className="h-48 mt-4 pr-4 text-sm text-slate-300">{description}</p>}
+              {activeEpisode && <>{episodeEl}</>}
             </div>
           </div>
         </div>
