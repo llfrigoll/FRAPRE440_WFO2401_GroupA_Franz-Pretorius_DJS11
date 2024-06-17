@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Episode, Preview, Season, Show } from '../utils/interfaces';
 import { getShow } from "../utils/Api";
 import { AnimatePresence, motion } from "framer-motion";
+import LoadIcon from "./LoadIcon";
 
 interface PopUpProps {
   showId: string;
@@ -12,6 +13,7 @@ interface PopUpProps {
 export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
   const [podcast, setPodcast] = useState<Show | null>(null)
   const [seasons, setSeasons] = useState<Season[]>([])
+  const [loading, setLoading] = useState(false)
 
   const popUpContainer = {
     visible: {
@@ -32,6 +34,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
 
   useEffect(() => {
     async function loadShow() {
+      setLoading(true)
       const showData = await getShow(showId)
       setPodcast(showData)
       if(podcast) {
@@ -41,6 +44,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         })
         setSeasons(allSeasons)
       }
+      setLoading(false)
     }
     loadShow();
 }, []);
@@ -49,6 +53,8 @@ const closeClickHandler = () => {
   hidepopup()
   closeModal(false)
 }
+
+
 
   
   return (
@@ -59,11 +65,19 @@ const closeClickHandler = () => {
       animate="visible"
       exit="hidden"
       variants={popUpContainer}>
-        <div className="col-span-2 bg-white rounded-lg">
-          <button onClick={closeClickHandler} className="ml-2 mt-2 font-medium">{'<'}</button>
+        <div className="flex flex-col col-span-2 bg-white rounded-lg w-full">
+          <button className="ml-2 mt-2 mr-auto font-medium col-span-2">{'< Back'}</button>
+          <>{loading ? <LoadIcon/> : <></>}</>
+          <div className="col-span-1 w-full ml-4 mt-2 p-2">
+            <div className="flex flex-row w-full">
+              <img src={podcast?.image} className="rounded-md w-1/4" alt={podcast?.title} />
+              <h1 className="text-slate-800 font-bold text-3xl pl-4 w-3/4 text-wrap">{podcast?.title}</h1>
+            </div>
+          </div>
         </div>
         <div className="col-span-1 bg-white rounded-lg">
-        
+          <button onClick={closeClickHandler} className="absolute mt-2 right-4 font-medium text-slate-800">Close x</button>
+          <>{loading ? <LoadIcon/> : <></>}</>
         </div>
       </motion.div>)
     </AnimatePresence>
