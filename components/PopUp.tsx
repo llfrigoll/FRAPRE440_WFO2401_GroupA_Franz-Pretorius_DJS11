@@ -91,7 +91,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     async function loadOptions() {
       const options = seasons.map(season => ({
         value: season.season,
-        label: `Season ${season.season.toString()}`
+        label: `Season ${season.season.toString()}: ${season.episodes.length} Episodes`
       }))
       setSeasonNames(options)
       const seasonStringLocal = `Seasons: ${seasons.length}`
@@ -148,7 +148,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         ...provided,
         border: 'none',
         boxShadow: 'none',
-        width: 200,
+        width: '100%',
         '&:hover': {
             border: 'none',
             color: "rgb(107, 114, 128)",
@@ -173,10 +173,12 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     episodeButtons =
     (
       <>
-        <h1 className="text-slate-300 text-2xl font-semibold pl-6 py-2 border border-green-500 border-solid">Episodes</h1>
+        <h1 className="text-slate-300 text-3xl font-semibold self-center py-6">Episodes</h1>
+        <div className="w-3/4 self-center grid grid-cols-2 gap-2">
           {episodes.map(episode => (
-            <button key={episode.episode} className="w-40 text-slate-300 text-left ml-6 mb-2 px-2 py-1 z-10 border-purple-400 border border-solid">Episode {episode.episode}</button>
+            <button key={episode.episode} className="w-fit text-slate-300 py-1 mx-auto z-10 hover:text-slate-800">Episode {episode.episode}</button>
           ))}
+        </div>
       </>
     )}
 
@@ -214,8 +216,8 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
           <button onClick={closeClickHandler} className="absolute top-2 right-4 font-medium text-slate-300 z-10">Close ✖</button>
           {loading && <LoadIcon iconColor ={propsColor}/>}
           {!loading && (
-            <div className="flex flex-col mt-10 border border-red-500 border-solid">
-              <div className="w-fit pl-6 border border-green-500 border-solid z-20">
+            <div className="flex flex-col mt-12">
+              <div className="w-3/4 self-center z-20">
                 <Select
                 styles={customStyles}
                 options={seasonNames}
