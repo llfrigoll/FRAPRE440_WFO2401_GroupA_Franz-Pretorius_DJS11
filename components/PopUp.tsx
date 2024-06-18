@@ -131,24 +131,24 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     loadEpisodes()
   }, [selectedSeason])
 
+  const favouritesBtnClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const favObject = {
+      'seasonNum' : selectedSeason,
+      'episodeNum' : activeEpisode?.episode
+    }
 
+    if(localStorage.getItem(showId)) {
+      localStorage.setItem(showId, JSON.stringify({
+        'seasonNum' : null,
+        'episodeNum' : null
+      }))
+    }
 
-  const favouritesBtnHover = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const favBtn = event.currentTarget
-    favBtn.textContent = '❤️'
-    favBtn.classList.add('text-xl')
-  }
-
-  const favouritesBtnOut = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const favBtn = event.currentTarget
-    favBtn.textContent = '♡'
-    favBtn.classList.remove('text-xl')
+    localStorage.setItem(showId, JSON.stringify(favObject))
   }
 
   const playHandler = (event: React.MouseEvent<HTMLAudioElement>) => {
-    const currentAudio = event.currentTarget
-    const audioOver = currentAudio
-    audioOver.classList.add('fixed right-2 bottom-2 w-1/6 z-50')
+  //   const currentAudio = event.currentTarget
   }
 
   let episodeEl = (<></>)
@@ -158,7 +158,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
       <>
         <div className="w-full flex flex-col h-fit">
           <div className="flex flex-row">
-            <button onMouseOver={favouritesBtnHover} onMouseOut={favouritesBtnOut} className="text-3xl mb-auto h-10 text-red-500 w-8">♡</button>
+            <button onClick={favouritesBtnClick} className={localStorage.getItem(showId) ? 'text-xl' : 'text-3xl' + " mb-auto h-10 text-white w-8 hover:text-red-500"}>{localStorage.getItem(showId) ? '❤️' : '♡'}</button>
             <h1 className="text-slate-300 text-2xl mt-1 mb-2 w-11/12 pl-1">{activeEpisode.episode}. {activeEpisode.title}</h1>
           </div>
           <p className="w-11/12 ml-4 text-slate-300 text-sm font-light pr-4 mb-4">{activeEpisode.description}</p> 
