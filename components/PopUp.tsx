@@ -156,7 +156,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     episodeEl =
     (
       <>
-        <div className="w-full flex flex-col h-48">
+        <div className="w-full flex flex-col h-fit">
           <div className="flex flex-row">
             <button onMouseOver={favouritesBtnHover} onMouseOut={favouritesBtnOut} className="text-3xl mb-auto h-10 text-red-500 w-8">♡</button>
             <h1 className="text-slate-300 text-2xl mt-1 mb-2 w-11/12 pl-1">{activeEpisode.episode}. {activeEpisode.title}</h1>
@@ -262,7 +262,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
             </div>
           )}
           <div className="col-span-2 pl-6 pt-44 pr-8 h-96">
-            <div className="overflow-y-auto">
+            <div className="overflow-y-auto h-full">
               {!activeEpisode && <p className="h-48 mt-4 pr-4 text-sm text-slate-300">{description}</p>}
               {activeEpisode && <>{episodeEl}</>}
             </div>
