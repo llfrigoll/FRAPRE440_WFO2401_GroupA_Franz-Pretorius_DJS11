@@ -132,15 +132,15 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
   }, [selectedSeason])
 
   const favouritesBtnHover = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const buttonElement = event.currentTarget
-    buttonElement.textContent = '❤️'
-    buttonElement.classList.add('text-xl')
+    const favBtn = event.currentTarget
+    favBtn.textContent = '❤️'
+    favBtn.classList.add('text-xl')
   }
 
   const favouritesBtnOut = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const buttonElement = event.currentTarget
-    buttonElement.textContent = '♡'
-    buttonElement.classList.remove('text-xl')
+    const favBtn = event.currentTarget
+    favBtn.textContent = '♡'
+    favBtn.classList.remove('text-xl')
   }
 
 
@@ -154,10 +154,10 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
             <button onMouseOver={favouritesBtnHover} onMouseOut={favouritesBtnOut} className="text-3xl mb-auto h-10 text-red-500 w-8">♡</button>
             <h1 className="text-slate-300 text-2xl mt-1 mb-2 w-11/12 pl-1">{activeEpisode.episode}. {activeEpisode.title}</h1>
           </div>
-          <p className="w-11/12 ml-4 text-slate-300 text-sm font-light pr-4 mb-4 border border-purple-500 border-solid">{activeEpisode.description}</p> 
+          <p className="w-11/12 ml-4 text-slate-300 text-sm font-light pr-4 mb-4">{activeEpisode.description}</p> 
           <AudioPlayer
             src={activeEpisode.file}
-            className="w-11/12 ml-4 border border-purple-500 border-solid"
+            className="w-11/12 ml-4"
           />
         </div>
       </>
@@ -198,6 +198,20 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     setActiveEpisode(activeEpisode)
   }
 
+  const handleBackClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const backBtn = event.currentTarget 
+    if(activeEpisode) {
+      setActiveEpisode(null)
+      return
+    }
+
+    if(selectedSeason) {
+      setSelectedSeason(-1)
+      backBtn.classList.add('hidden')
+      return
+    }
+  }
+
   const propsColor = 'border-slate-400'
 
   let episodeButtons = (<></>)
@@ -224,7 +238,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         exit="hidden"
         variants={popUpContainer}
       >
-        <button className="fixed pl-4 pt-2 font-medium text-slate-300 z-10">{'< Back'}</button>
+        <button onClick={handleBackClick} className={'fixed pl-4 pt-2 font-medium text-slate-300 z-10 ' + ((selectedSeason) === -1 ? 'hidden' : 'visible')}>{'< Back'}</button>
         <div className="flex flex-col col-span-2 bg-slate-800 rounded-lg w-full">
           {loading && <LoadIcon iconColor ={propsColor}/>}
           <div className="absolute top-10 left-2 right-96 mr-12 h-48 rounded-xl bg-slate-800"></div>
