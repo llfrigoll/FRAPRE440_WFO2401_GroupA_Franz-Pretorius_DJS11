@@ -140,6 +140,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
       showId: showId,
       seasonNum: selectedSeason,
       episodeNum: activeEpisode.episode,
+      dateAdded: new Date()
     };
 
     const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`;
@@ -152,10 +153,6 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     }
 
     forceUpdate(); // Forces the component to re-render
-  }
-
-  const playHandler = (event: React.MouseEvent<HTMLAudioElement>) => {
-  //   const currentAudio = event.currentTarget
   }
 
   let episodeEl = (<></>)
@@ -177,7 +174,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
             <h1 className="text-slate-300 text-2xl mt-1 mb-2 w-11/12 pl-1">{activeEpisode.episode}. {activeEpisode.title}</h1>
           </div>
           <p className="w-11/12 ml-4 text-slate-300 text-sm font-light pr-4 mb-4">{activeEpisode.description}</p>
-          <audio controls onPlay={playHandler} data-ref="audio-player" className="w-11/12 ml-4">
+          <audio controls data-ref="audio-player" className="w-11/12 ml-4">
             <source src={activeEpisode.file} type="audio/mp3"/>
           </audio>
         </div>
