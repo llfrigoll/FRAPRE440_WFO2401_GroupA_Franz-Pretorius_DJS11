@@ -131,6 +131,8 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     loadEpisodes()
   }, [selectedSeason])
 
+  
+
   const favouritesBtnHover = (event: React.MouseEvent<HTMLButtonElement>) => {
     const favBtn = event.currentTarget
     favBtn.textContent = '❤️'
@@ -157,12 +159,15 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
           <p className="w-11/12 ml-4 text-slate-300 text-sm font-light pr-4 mb-4">{activeEpisode.description}</p> 
           <AudioPlayer
             src={activeEpisode.file}
+            data-ref="audio-player"
             className="w-11/12 ml-4"
           />
         </div>
       </>
     )
   }
+
+
 
   const closeClickHandler = () => {
     hidepopup();
@@ -222,7 +227,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         <h1 className="text-slate-300 text-3xl font-semibold self-center py-6">Episodes</h1>
         <div className="w-3/4 self-center grid grid-cols-2 gap-2">
           {episodes.map(episode => (
-            <button key={episode.episode} onClick={() => handleEpisodeClick(episode)} className="w-fit text-slate-300 py-1 mx-auto z-10 hover:text-slate-800">Episode {episode.episode}</button>
+            <button key={episode.episode} onClick={() => handleEpisodeClick(episode)} className={"w-fit py-1 mx-auto z-10 hover:text-slate-800 " + (activeEpisode === episode ? 'text-slate-900' : 'text-slate-300')}>Episode {episode.episode}</button>
           ))}
         </div>
       </>
