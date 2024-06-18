@@ -206,6 +206,25 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     setActiveEpisode(newEpisode);
   };
 
+  window.addEventListener('beforeunload', (event: BeforeUnloadEvent) => {
+    if(audioRef.current) {
+        if(audioRef.current.duration > 0 && !audioRef.current.paused) {
+          const confirmationMessage = 'Audio is still playing. Are you sure you want to leave?';
+          event.preventDefault(); 
+          return confirmationMessage; 
+        }
+    }
+  });
+
+  // if(audioRef.current) {
+  //   if(audioRef.current.duration > 0 && !audioRef.current.paused) {
+  //     const confirmationMessage = 'Audio is still playing. Are you sure you want to leave?';
+  //     event.preventDefault(); // Standard way to trigger a confirmation dialog
+  //     return confirmationMessage; // For some browsers
+  //   }
+  // }
+
+
   const handleBackClick = () => {
     setActiveEpisode(null);
     setSelectedSeason(-1);
