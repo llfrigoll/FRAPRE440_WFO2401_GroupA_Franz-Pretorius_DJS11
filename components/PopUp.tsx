@@ -131,8 +131,16 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     loadEpisodes()
   }, [selectedSeason])
 
-  const favouritesBtnHover = () => {
+  const favouritesBtnHover = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const buttonElement = event.currentTarget
+    buttonElement.textContent = '❤️'
+    buttonElement.classList.add('text-xl')
+  }
 
+  const favouritesBtnOut = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const buttonElement = event.currentTarget
+    buttonElement.textContent = '♡'
+    buttonElement.classList.remove('text-xl')
   }
 
 
@@ -141,14 +149,15 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     episodeEl =
     (
       <>
-        <div className="w-full flex flex-col border-green-500 border border-solid h-48">
+        <div className="w-full flex flex-col h-48">
           <div className="flex flex-row">
-            <button onMouseOver={() => favouritesBtnHover()} className="text-4xl text-red-500 h-fit border border-solid border-purple-500">♡</button>
-            <h1 className="text-xl mt-1 mb-2 border border-solid border-purple-500">1. {activeEpisode.title}</h1>
+            <button onMouseOver={favouritesBtnHover} onMouseOut={favouritesBtnOut} className="text-3xl mb-auto h-10 text-red-500 w-8">♡</button>
+            <h1 className="text-slate-300 text-2xl mt-1 mb-2 w-11/12 pl-1">{activeEpisode.episode}. {activeEpisode.title}</h1>
           </div>
-          <p>{activeEpisode.description}</p> 
+          <p className="w-11/12 ml-4 text-slate-300 text-sm font-light pr-4 mb-4 border border-purple-500 border-solid">{activeEpisode.description}</p> 
           <AudioPlayer
             src={activeEpisode.file}
+            className="w-11/12 ml-4 border border-purple-500 border-solid"
           />
         </div>
       </>
