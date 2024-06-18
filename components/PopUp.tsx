@@ -33,6 +33,8 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
   const [seasonString, setSeasonString] = useState<string>('')
   const [validSeason, setValidSeason] = useState(false)
   const [activeEpisode, setActiveEpisode] = useState<Episode | null>(null)
+  const [_, setRender] = useState(false);
+  const forceUpdate = () => setRender(prev => !prev);
 
   const months = [
     "January", "February", "March", "April", "May", "June",
@@ -132,19 +134,24 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
   }, [selectedSeason])
 
   const favouritesBtnClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (!activeEpisode) return;
+
     const favObject = {
-      'seasonNum' : selectedSeason,
-      'episodeNum' : activeEpisode?.episode
+      showId: showId,
+      seasonNum: selectedSeason,
+      episodeNum: activeEpisode.episode,
+    };
+
+    const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`;
+    const storedItem = localStorage.getItem(uniqueKey);
+    
+    if (storedItem) {
+      localStorage.removeItem(uniqueKey);
+    } else {
+      localStorage.setItem(uniqueKey, JSON.stringify(favObject));
     }
 
-    if(localStorage.getItem(showId)) {
-      localStorage.setItem(showId, JSON.stringify({
-        'seasonNum' : null,
-        'episodeNum' : null
-      }))
-    }
-
-    localStorage.setItem(showId, JSON.stringify(favObject))
+    forceUpdate(); // Forces the component to re-render
   }
 
   const playHandler = (event: React.MouseEvent<HTMLAudioElement>) => {
@@ -153,15 +160,23 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
 
   let episodeEl = (<></>)
   if(activeEpisode) {
+    const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`;
+    const isFavourite = localStorage.getItem(uniqueKey) !== null;
+    
     episodeEl =
     (
       <>
         <div className="w-full flex flex-col h-fit">
           <div className="flex flex-row">
-            <button onClick={favouritesBtnClick} className={localStorage.getItem(showId) ? 'text-xl' : 'text-3xl' + " mb-auto h-10 text-white w-8 hover:text-red-500"}>{localStorage.getItem(showId) ? '❤️' : '♡'}</button>
+            <button 
+              onClick={favouritesBtnClick} 
+              className={`text-3xl mb-auto h-10 w-8 hover:text-red-500 ${isFavourite ? 'text-red-500 text-xl' : 'text-white'}`}
+            >
+              {isFavourite ? '❤️' : '♡'}
+            </button>
             <h1 className="text-slate-300 text-2xl mt-1 mb-2 w-11/12 pl-1">{activeEpisode.episode}. {activeEpisode.title}</h1>
           </div>
-          <p className="w-11/12 ml-4 text-slate-300 text-sm font-light pr-4 mb-4">{activeEpisode.description}</p> 
+          <p className="w-11/12 ml-4 text-slate-300 text-sm font-light pr-4 mb-4">{activeEpisode.description}</p>
           <audio controls onPlay={playHandler} data-ref="audio-player" className="w-11/12 ml-4">
             <source src={activeEpisode.file} type="audio/mp3"/>
           </audio>
@@ -169,8 +184,6 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
       </>
     )
   }
-
-
 
   const closeClickHandler = () => {
     hidepopup();
@@ -236,6 +249,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
       </>
     )
   }
+
 
   return (
     <AnimatePresence>
