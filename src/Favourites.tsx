@@ -6,6 +6,6 @@ interface FavouriteProps {
 
 export default function Favourites({handleNav}: FavouriteProps) {
     return (
-        <></>
+        <div>FAVOURITES</div>
     )
 }

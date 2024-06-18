@@ -6,11 +6,11 @@ interface NavbarProps {
   handleNav: (value: boolean) => void;
   isNavActive: boolean;
   hidepopup: () => void;
-  isFiltersSelected: boolean
-  isDashboardSelected: boolean
+  handleFavouritesSelected: (value: boolean) => void
+  handleDashboardSelected: (value: boolean) => void
 }
 
-const Navbar: React.FC<NavbarProps> = ({ handleNav, isNavActive, hidepopup, isDashboardSelected, isFiltersSelected }) => {
+const Navbar: React.FC<NavbarProps> = ({ handleNav, isNavActive, hidepopup, handleDashboardSelected, handleFavouritesSelected }) => {
 
   const handleToggle = () => {
     handleNav(!isNavActive);
@@ -34,6 +34,16 @@ const Navbar: React.FC<NavbarProps> = ({ handleNav, isNavActive, hidepopup, isDa
     },
   };
 
+  const handleFavClick = () => {
+    handleDashboardSelected(false)
+    handleFavouritesSelected(true)
+  }
+
+  const handleDashClick = () => {
+    handleFavouritesSelected(false)
+    handleDashboardSelected(true)
+  }
+
   return (
     <>
       <button
@@ -52,7 +62,7 @@ const Navbar: React.FC<NavbarProps> = ({ handleNav, isNavActive, hidepopup, isDa
             exit="hidden"
             variants={navContainer}
           >
-            <NavbarItems />
+            <NavbarItems handleDashClick={handleDashClick} handleFavClick={handleFavClick}/>
           </motion.div>
         )}
       </AnimatePresence>

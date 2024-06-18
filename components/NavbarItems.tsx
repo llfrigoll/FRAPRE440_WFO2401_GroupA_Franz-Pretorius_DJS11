@@ -2,7 +2,12 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useLinkClickHandler } from "react-router-dom";
 
-const NavbarItems: React.FC = () => {
+interface NavItemsProps {
+  handleDashClick: () => void
+  handleFavClick: () => void
+}
+
+const NavbarItems: React.FC<NavItemsProps> = ({handleDashClick, handleFavClick}) => {
   const items = ["Dashboard", "Favourites"];
 
   const navList = {
@@ -41,7 +46,9 @@ const NavbarItems: React.FC = () => {
 
   const itemClickHandler = (event: React.MouseEvent<HTMLParagraphElement>) => {
     if(event.currentTarget.textContent === "Dashboard") {
-      
+      handleDashClick()
+    }else {
+      handleFavClick()
     }
   }
 

@@ -13,7 +13,7 @@ export default function App() {
   const [popUpActive, setPopUpActive] = useState(false);
   const [currentShow, setCurrentShow] = useState<Preview | null>(null);
   const [dashSelected, setDashSelected] = useState(true)
-  const [filtersSelected, setFiltersSelected] = useState(false)
+  const [favouritesSelected, setFavouritesSelected] = useState(false)
 
   const navHandler = (value: boolean) => {
     setModalActive(value);
@@ -35,9 +35,9 @@ export default function App() {
     <div data-ref="app-container" className="relative">
       {modalActive && <Modal handleNav={navHandler} hidepopup={hidePopUp}/>}
       <Header />
-      <Navbar handleNav={navHandler} isNavActive={navActive} hidepopup={hidePopUp} isFiltersSelected={filtersSelected} isDashboardSelected={dashSelected}/>
-      <Dashboard onTileClick={showPopUp} hidepopup={hidePopUp} handleNav={navHandler}/>
-      <Favourites handleNav={navHandler}/>
+      <Navbar handleNav={navHandler} isNavActive={navActive} hidepopup={hidePopUp} handleFavouritesSelected={setFavouritesSelected} handleDashboardSelected={setDashSelected}/>
+      {dashSelected && <Dashboard onTileClick={showPopUp} hidepopup={hidePopUp} handleNav={navHandler} />}
+      {favouritesSelected && <Favourites handleNav={navHandler}/>}
       {popUpActive && currentShow && <PopUp showId={currentShow.id} hidepopup={hidePopUp} closeModal={setModalActive}/>}
     </div>
   );
