@@ -165,9 +165,11 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     const storedTime = localStorage.getItem(`${uniqueKey}_audio`);
     if (storedTime && audioRef.current) {
       audioRef.current.currentTime = parseFloat(storedTime);
+      audioRef.current.pause(); // Ensure the audio remains paused after loading the current time
     } else {
       if (audioRef.current) {
         audioRef.current.currentTime = 0;
+        audioRef.current.pause(); // Ensure the audio remains paused
       }
     }
   };
@@ -194,6 +196,9 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
   };
 
   const handleEpisodeClick = (newEpisode: Episode) => {
+    if (audioRef.current) {
+      audioRef.current.pause()
+    }
     if (activeEpisode) {
       const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`;
       saveCurrentTime(uniqueKey);
