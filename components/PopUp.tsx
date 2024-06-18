@@ -133,7 +133,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     loadEpisodes()
   }, [selectedSeason])
 
-  const favouritesBtnClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const favouritesBtnClick = () => {
     if (!activeEpisode) return;
 
     const favObject = {

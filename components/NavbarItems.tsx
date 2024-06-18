@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { useLinkClickHandler } from "react-router-dom";
 
 const NavbarItems: React.FC = () => {
   const items = ["Dashboard", "Favourites"];
@@ -38,9 +39,15 @@ const NavbarItems: React.FC = () => {
     },
   };
 
+  const itemClickHandler = (event: React.MouseEvent<HTMLParagraphElement>) => {
+    if(event.currentTarget.textContent === "Dashboard") {
+      
+    }
+  }
+
   return (
     <motion.ul
-      className="flex flex-col items-start pt-12  px-16 pb-52 text slate"
+      className="flex flex-col items-start pt-12  px-16 pb-52"
       initial="hidden"
       animate="visible"
       exit="hidden"
@@ -48,11 +55,11 @@ const NavbarItems: React.FC = () => {
     >
       {items.map((item) => (
         <motion.li
-          className="text-xl text-slate-300 cursor-pointer list-none mb-7 hover:text-white"
+          className="text-xl text-slate-300 cursor-pointer list-none mb-7"
           variants={navItem}
           key={item}
         >
-          <p>{item}</p>
+          <p onClick={itemClickHandler}>{item}</p>
         </motion.li>
       ))}
     </motion.ul>

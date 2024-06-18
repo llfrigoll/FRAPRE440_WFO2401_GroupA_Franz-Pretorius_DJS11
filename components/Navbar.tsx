@@ -4,14 +4,14 @@ import { motion, AnimatePresence } from "framer-motion";
 
 interface NavbarProps {
   handleNav: (value: boolean) => void;
-  isActive: boolean;
+  isNavActive: boolean;
   hidepopup: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ handleNav, isActive, hidepopup }) => {
+const Navbar: React.FC<NavbarProps> = ({ handleNav, isNavActive, hidepopup }) => {
 
   const handleToggle = () => {
-    handleNav(!isActive);
+    handleNav(!isNavActive);
     hidepopup()
   };
 
@@ -41,7 +41,7 @@ const Navbar: React.FC<NavbarProps> = ({ handleNav, isActive, hidepopup }) => {
         ≡
       </button>
       <AnimatePresence>
-        {isActive && (
+        {isNavActive && (
           <motion.div
             data-ref="navbar-menu"
             className="fixed z-50 w-64 h-full mt-20 bg-gradient-to-b from-slate-800 to-white"
