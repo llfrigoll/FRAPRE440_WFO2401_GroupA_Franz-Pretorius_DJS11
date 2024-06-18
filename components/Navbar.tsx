@@ -37,11 +37,15 @@ const Navbar: React.FC<NavbarProps> = ({ handleNav, isNavActive, hidepopup, hand
   const handleFavClick = () => {
     handleDashboardSelected(false)
     handleFavouritesSelected(true)
+    handleNav(!isNavActive);
+    hidepopup()
   }
 
   const handleDashClick = () => {
     handleFavouritesSelected(false)
     handleDashboardSelected(true)
+    handleNav(!isNavActive);
+    hidepopup()
   }
 
   return (
