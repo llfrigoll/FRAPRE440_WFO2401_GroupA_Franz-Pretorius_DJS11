@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { Episode, Genre, Preview, Season, Show } from '../utils/interfaces';
-import { getAllPreviews, getGenres, getShow } from "../utils/Api";
+import React, { useEffect, useState, useRef } from "react";
+import { Episode, Season, Show } from '../utils/interfaces';
+import { getShow } from "../utils/Api";
 import { AnimatePresence, motion } from "framer-motion";
 import LoadIcon from "./LoadIcon";
 import Select, { StylesConfig, SingleValue } from 'react-select'
-import AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
 
 interface PopUpProps {
@@ -34,6 +33,8 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
   const [validSeason, setValidSeason] = useState(false)
   const [activeEpisode, setActiveEpisode] = useState<Episode | null>(null)
   const [_, setRender] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
   const forceUpdate = () => setRender(prev => !prev);
 
   const months = [
@@ -72,7 +73,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     async function loadInfo() {
       if (podcast) {
         setSeasons(podcast.seasons);
-        podcast.genres ? setGenreString('Genres: ' + podcast.genres.join(', ')) : setGenreString('Genres: 🗿')
+        setGenreString(podcast.genres ? 'Genres: ' + podcast.genres.join(', ') : 'Genres: 🗿');
 
         const titleString = `${podcast.title}`
         setPopUpTitle(titleString)
@@ -86,11 +87,10 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
 
         const descriptionString = `Description: ${podcast.description}`
         setDescription(descriptionString)
-
       }
     }
     loadInfo()
-  },[podcast])
+  }, [podcast])
 
   useEffect(() => {
     async function loadOptions() {
@@ -109,17 +109,16 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     async function loadEpisodes() {
       let localEpisodes: Episode[] = []
       
-      if(selectedSeason !== -1) {
+      if (selectedSeason !== -1) {
         localEpisodes = [...seasons[selectedSeason - 1].episodes]
         setPopUpImage(seasons[selectedSeason - 1].image)
         setPopUpTitle(`${podcast?.title}: Season ${selectedSeason}`)
         setDescription('')
         setSeasonString('')
         setValidSeason(true)
-        
-      }else {
+      } else {
         localEpisodes = []
-        if(podcast) {
+        if (podcast) {
           setPopUpImage(podcast.image)
           setPopUpTitle(podcast.title)
           setDescription(podcast.description)
@@ -155,36 +154,56 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     forceUpdate(); // Forces the component to re-render
   }
 
-  let episodeEl = (<></>)
-  if(activeEpisode) {
-    const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`;
-    const isFavourite = localStorage.getItem(uniqueKey) !== null;
-    
-    episodeEl =
-    (
-      <>
-        <div className="w-full flex flex-col h-fit">
-          <div className="flex flex-row">
-            <button 
-              onClick={favouritesBtnClick} 
-              className={`text-3xl mb-auto h-10 w-8 hover:text-red-500 ${isFavourite ? 'text-red-500 text-xl' : 'text-white'}`}
-            >
-              {isFavourite ? '❤️' : '♡'}
-            </button>
-            <h1 className="text-slate-300 text-2xl mt-1 mb-2 w-11/12 pl-1">{activeEpisode.episode}. {activeEpisode.title}</h1>
-          </div>
-          <p className="w-11/12 ml-4 text-slate-300 text-sm font-light pr-4 mb-4">{activeEpisode.description}</p>
-          <audio controls data-ref="audio-player" className="w-11/12 ml-4">
-            <source src={activeEpisode.file} type="audio/mp3"/>
-          </audio>
-        </div>
-      </>
-    )
-  }
+  const saveCurrentTime = (uniqueKey: string) => {
+    if (audioRef.current) {
+      const currentTime = audioRef.current.currentTime;
+      localStorage.setItem(`${uniqueKey}_audio`, currentTime.toString());
+    }
+  };
 
-  const closeClickHandler = () => {
-    hidepopup();
-    closeModal(false);
+  const loadCurrentTime = (uniqueKey: string) => {
+    const storedTime = localStorage.getItem(`${uniqueKey}_audio`);
+    if (storedTime && audioRef.current) {
+      audioRef.current.currentTime = parseFloat(storedTime);
+    } else {
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (activeEpisode) {
+      const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`;
+      loadCurrentTime(uniqueKey);
+    }
+  }, [activeEpisode]);
+
+  const handlePlay = () => {
+    if (activeEpisode) {
+      const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`;
+      saveCurrentTime(uniqueKey);
+    }
+  };
+
+  const handlePause = () => {
+    if (activeEpisode) {
+      const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`;
+      saveCurrentTime(uniqueKey);
+    }
+  };
+
+  const handleEpisodeClick = (newEpisode: Episode) => {
+    if (activeEpisode) {
+      const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`;
+      saveCurrentTime(uniqueKey);
+    }
+    setActiveEpisode(newEpisode);
+  };
+
+  const handleBackClick = () => {
+    setActiveEpisode(null);
+    setSelectedSeason(-1);
   };
 
   const customStyles: StylesConfig<OptionType, false> = {
@@ -206,36 +225,9 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     })
   };
 
-  const handleSeasonChange = (selectedOption: SingleValue<OptionType>) => {
-    setSelectedSeason(selectedOption ? selectedOption.value : -1)
-    setActiveEpisode(null)
-  };
-
-
-  const handleEpisodeClick = (activeEpisode: Episode) => {
-    setActiveEpisode(activeEpisode)
-  }
-
-  const handleBackClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const backBtn = event.currentTarget 
-    if(activeEpisode) {
-      setActiveEpisode(null)
-      return
-    }
-
-    if(selectedSeason) {
-      setSelectedSeason(-1)
-      backBtn.classList.add('hidden')
-      return
-    }
-  }
-
-  const propsColor = 'border-slate-400'
-
-  let episodeButtons = (<></>)
-  if(validSeason) {
-    episodeButtons =
-    (
+  let episodeButtons = (<></>);
+  if (validSeason) {
+    episodeButtons = (
       <>
         <h1 className="text-slate-300 text-3xl font-semibold self-center py-6">Episodes</h1>
         <div className="w-3/4 self-center grid grid-cols-2 gap-2">
@@ -247,6 +239,12 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     )
   }
 
+  const closeClickHandler = () => {
+    hidepopup();
+    closeModal(false);
+  };
+
+  const propsColor = 'border-slate-400'
 
   return (
     <AnimatePresence>
@@ -275,7 +273,31 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
           <div className="col-span-2 pl-6 pt-44 pr-8 h-96">
             <div className="overflow-y-auto h-full">
               {!activeEpisode && <p className="h-48 mt-4 pr-4 text-sm text-slate-300">{description}</p>}
-              {activeEpisode && <>{episodeEl}</>}
+              {activeEpisode && (
+                <div className="w-full flex flex-col h-fit">
+                  <div className="flex flex-row">
+                    <button 
+                      onClick={favouritesBtnClick} 
+                      className={`text-3xl mb-auto h-10 w-8 hover:text-red-500 ${localStorage.getItem(`${showId}_${selectedSeason}_${activeEpisode.episode}`) ? 'text-red-500 text-xl' : 'text-white'}`}
+                    >
+                      {localStorage.getItem(`${showId}_${selectedSeason}_${activeEpisode.episode}`) ? '❤️' : '♡'}
+                    </button>
+                    <h1 className="text-slate-300 text-2xl mt-1 mb-2 w-11/12 pl-1">{activeEpisode.episode}. {activeEpisode.title}</h1>
+                  </div>
+                  <p className="w-11/12 ml-4 text-slate-300 text-sm font-light pr-4 mb-4">{activeEpisode.description}</p>
+                  <audio 
+                    ref={audioRef}
+                    controls
+                    autoPlay={false}
+                    data-ref="audio-player" 
+                    className="w-11/12 ml-4"
+                    onPlay={handlePlay}
+                    onPause={handlePause}
+                  >
+                    <source src={activeEpisode.file} type="audio/mp3"/>
+                  </audio>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -290,13 +312,14 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
                 options={seasonNames}
                 isClearable={true}
                 placeholder="Seasons"
-                onChange={handleSeasonChange}/>
+                onChange={(selectedOption: SingleValue<OptionType>) => setSelectedSeason(selectedOption ? selectedOption.value : -1)}
+                />
               </div>
               <div className="flex flex-col items-start">
                 {episodeButtons}
               </div>
             </div>
-            )}
+          )}
         </div>
       </motion.div>
     </AnimatePresence>
