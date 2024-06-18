@@ -6,9 +6,11 @@ interface NavbarProps {
   handleNav: (value: boolean) => void;
   isNavActive: boolean;
   hidepopup: () => void;
+  isFiltersSelected: boolean
+  isDashboardSelected: boolean
 }
 
-const Navbar: React.FC<NavbarProps> = ({ handleNav, isNavActive, hidepopup }) => {
+const Navbar: React.FC<NavbarProps> = ({ handleNav, isNavActive, hidepopup, isDashboardSelected, isFiltersSelected }) => {
 
   const handleToggle = () => {
     handleNav(!isNavActive);

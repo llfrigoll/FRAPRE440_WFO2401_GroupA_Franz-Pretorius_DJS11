@@ -10,7 +10,7 @@ interface DashboardProps {
     onTileClick: (show: Preview) => void;
     hidepopup: () => void;
     handleNav: (value: boolean) => void
-  }
+}
 
 export default function Dashboard({ onTileClick, hidepopup, handleNav }: DashboardProps) {
     const [previews, setPreviews] = useState<Preview[]>([]);

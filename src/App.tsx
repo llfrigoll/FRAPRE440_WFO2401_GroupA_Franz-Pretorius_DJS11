@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar';
 import Modal from '../components/Modal';
 import PopUp from '../components/PopUp';
 import { Preview } from '../utils/interfaces';
-import Favourites from '../components/Favourites'
+import Favourites from './Favourites'
 
 export default function App() {
   const [modalActive, setModalActive] = useState(false);
@@ -35,9 +35,9 @@ export default function App() {
     <div data-ref="app-container" className="relative">
       {modalActive && <Modal handleNav={navHandler} hidepopup={hidePopUp}/>}
       <Header />
-      <Navbar handleNav={navHandler} isNavActive={navActive} hidepopup={hidePopUp} isFiltersSelected={filtersSelected}/>
+      <Navbar handleNav={navHandler} isNavActive={navActive} hidepopup={hidePopUp} isFiltersSelected={filtersSelected} isDashboardSelected={dashSelected}/>
       <Dashboard onTileClick={showPopUp} hidepopup={hidePopUp} handleNav={navHandler}/>
-      <Favourites onTileClick={showPopUp} hidepopup={hidePopUp} handleNav={navHandler}/>
+      <Favourites handleNav={navHandler}/>
       {popUpActive && currentShow && <PopUp showId={currentShow.id} hidepopup={hidePopUp} closeModal={setModalActive}/>}
     </div>
   );
