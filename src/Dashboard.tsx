@@ -96,7 +96,7 @@ export default function Dashboard({ onTileClick, hidepopup, handleNav }: Dashboa
     return (
         <>
             <SearchBar onSearchTextChange={handleSearchTextChange} hidepopup={hidepopup} handleNav={handleNav}/>
-            <div data-ref="dashboard-container" className="pt-20 bg-slate-300 transition-all">
+            <div data-ref="dashboard-container" className="pt-20 bg-slate-300 transition-all min-h-screen">
                 <Filters onGenreChange={handleGenreChange} onSortChange={handleSortChange} />
                 <div data-ref="tile-container" className="grid grid-cols-5 gap-10 p-10">
                     {previewTiles.length === 0 ? <div className="col-span-5 mx-auto font-medium">No results found.</div> : previewTiles}
