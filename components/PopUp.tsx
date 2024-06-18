@@ -131,7 +131,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     loadEpisodes()
   }, [selectedSeason])
 
-  
+
 
   const favouritesBtnHover = (event: React.MouseEvent<HTMLButtonElement>) => {
     const favBtn = event.currentTarget
@@ -145,6 +145,11 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     favBtn.classList.remove('text-xl')
   }
 
+  const playHandler = (event: React.MouseEvent<HTMLAudioElement>) => {
+    const currentAudio = event.currentTarget
+    const audioOver = currentAudio
+    audioOver.classList.add('fixed right-2 bottom-2 w-1/6 z-50')
+  }
 
   let episodeEl = (<></>)
   if(activeEpisode) {
@@ -157,11 +162,9 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
             <h1 className="text-slate-300 text-2xl mt-1 mb-2 w-11/12 pl-1">{activeEpisode.episode}. {activeEpisode.title}</h1>
           </div>
           <p className="w-11/12 ml-4 text-slate-300 text-sm font-light pr-4 mb-4">{activeEpisode.description}</p> 
-          <AudioPlayer
-            src={activeEpisode.file}
-            data-ref="audio-player"
-            className="w-11/12 ml-4"
-          />
+          <audio controls onPlay={playHandler} data-ref="audio-player" className="w-11/12 ml-4">
+            <source src={activeEpisode.file} type="audio/mp3"/>
+          </audio>
         </div>
       </>
     )
