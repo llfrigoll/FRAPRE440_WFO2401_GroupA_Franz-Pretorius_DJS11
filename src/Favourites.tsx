@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Preview } from "../utils/interfaces";
 import Filters from "../components/Filters";
+import { getShow } from "../utils/Api";
 
 interface FavouriteProps {
     handleNav: (value: boolean) => void;
@@ -63,7 +64,6 @@ export default function Favourites({ handleNav }: FavouriteProps) {
 
     useEffect(() => {
         function createDisplayShows() {
-            console.log("Creating display shows with favEpisodes:", favEpisodes);
             let items: DisplayShow[] = [];
     
             favEpisodes.forEach((episode) => {
@@ -93,14 +93,26 @@ export default function Favourites({ handleNav }: FavouriteProps) {
                 }
             });
     
-            console.log("Final display items:", items);
             setDisplayItems([...items]);
         }
         createDisplayShows();
     }, [favEpisodes]);
-    
 
-    console.log("Display items state:", displayItems);
+    useEffect(() => {
+        async function fetchShows() {
+            displayItems.forEach(async show => {
+                const showData = await getShow(show.showId)
+                const showImage = showData.image
+                const showTitle = showData.title
+                const numOfSeasons = showData.seasons.length
+                const lastUpdated = new Date(showData.updated)
+
+                show.seasons.forEach(season => )
+            })
+        }
+        fetchShows()
+    },[displayItems])
+    
 
     const handleSortChange = (sortFunc: (a: Preview, b: Preview) => number) => {
         setSortFunction(() => sortFunc);
