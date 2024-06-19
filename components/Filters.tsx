@@ -65,7 +65,7 @@ export default function Filters({ onGenreChange, onSortChange }: FiltersProps) {
     const propsColor = 'border-slate-800'
     if (loading) {
         return (
-            <div data-ref="filters-container" className="pt-20">
+            <div data-ref="filters-container" className="pt-140 ml-auto mr-20">
                 <LoadIcon iconColor ={propsColor}/>
             </div>
         );
