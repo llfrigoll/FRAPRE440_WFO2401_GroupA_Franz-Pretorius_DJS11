@@ -34,7 +34,6 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
   const [activeEpisode, setActiveEpisode] = useState<Episode | null>(null)
   const [_, setRender] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [activeWatched, setActiveWatched] = useState(false)
 
   const forceUpdate = () => setRender(prev => !prev);
 
@@ -155,66 +154,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     forceUpdate(); // Forces the component to re-render
   }
 
-  const saveCurrentTime = (uniqueKey: string) => {
-    if (audioRef.current) {
-      const currentTime = audioRef.current.currentTime;
-      const endedStatus = audioRef.current.ended
-      const audioData = {
-        'currentTime': currentTime,
-        'endedStatus' : endedStatus
-      }
-      localStorage.setItem(`${uniqueKey}_audio`, JSON.stringify(audioData));
-    }
-  };
-
-  const loadCurrentTime = (uniqueKey: string) => {
-    const audioData = localStorage.getItem(`${uniqueKey}_audio`)
-    if(audioData) {
-      const storedTime = JSON.parse(audioData)['currentTime']
-      const watched = JSON.parse(audioData)['endedStatus']
-      setActiveWatched(watched)
-
-      if (storedTime && audioRef.current) {
-        audioRef.current.currentTime = parseFloat(storedTime);
-        audioRef.current.pause(); // Ensure the audio remains paused after loading the current time
-      } else {
-        if (audioRef.current) {
-          audioRef.current.currentTime = 0;
-          audioRef.current.pause(); // Ensure the audio remains paused
-        }
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (activeEpisode) {
-      const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`;
-      loadCurrentTime(uniqueKey);
-    }
-  }, [activeEpisode, activeWatched]);
-
-  const handlePlay = () => {
-    if (activeEpisode) {
-      const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`;
-      saveCurrentTime(uniqueKey);
-    }
-  };
-
-  const handlePause = () => {
-    if (activeEpisode) {
-      const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`;
-      saveCurrentTime(uniqueKey);
-    }
-  };
-
   const handleEpisodeClick = (newEpisode: Episode) => {
-    if (audioRef.current) {
-      audioRef.current.pause()
-    }
-    if (activeEpisode) {
-      const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`;
-      saveCurrentTime(uniqueKey);
-    }
     setActiveEpisode(newEpisode);
   };
 
@@ -309,7 +249,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
                     >
                       {localStorage.getItem(`${showId}_${selectedSeason}_${activeEpisode.episode}`) ? '❤️' : '♡'}
                     </button>
-                    <h1 className="text-slate-300 text-2xl mt-1 mb-2 w-11/12 pl-1"> {activeEpisode.episode}. {activeEpisode.title} {activeWatched && <span className="text-red-400">- Watched</span>}</h1>
+                    <h1 className="text-slate-300 text-2xl mt-1 mb-2 w-11/12 pl-1"> {activeEpisode.episode}. {activeEpisode.title}</h1>
                   </div>
                   <p className="w-11/12 ml-4 text-slate-300 text-sm font-light pr-4 mb-4">{activeEpisode.description}</p>
                   <audio 
@@ -318,8 +258,6 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
                     autoPlay={false}
                     data-ref="audio-player" 
                     className="w-11/12 ml-4"
-                    onPlay={handlePlay}
-                    onPause={handlePause}
                   >
                     <source src={activeEpisode.file} type="audio/mp3"/>
                   </audio>
