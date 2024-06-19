@@ -34,6 +34,7 @@ export default function Favourites({ handleNav }: FavouriteProps) {
     const [favEpisodeStrings, setFavEpisodeStrings] = useState<(string | null)[]>([]);
     const [favEpisodes, setFavEpisodes] = useState<(FavObject | null)[]>([]);
     const [displayItems, setDisplayItems] = useState<DisplayShow[]>([]);
+    const [renderedShows, setRenderedShows] = useState<JSX.Element[]>([]);
 
     const months = [
         "January", "February", "March", "April", "May", "June",
@@ -99,8 +100,9 @@ export default function Favourites({ handleNav }: FavouriteProps) {
         createDisplayShows();
     }, [favEpisodes]);
 
-    let tileContainer = <></>
     async function fetchAndDisplayShows() {
+        const elements: JSX.Element[] = [];
+
         for (const show of displayItems) {
             const showData = await getShow(show.showId);
             const showImage = showData.image;
@@ -109,17 +111,46 @@ export default function Favourites({ handleNav }: FavouriteProps) {
             const lastUpdatedDate = new Date(showData.updated);
             const lastUpdatedString = `${lastUpdatedDate.getDate()} ${months[lastUpdatedDate.getMonth()]} ${lastUpdatedDate.getFullYear()}`;
 
+            const seasonElements: JSX.Element[] = [];
             for (const season of show.seasons) {
                 const seasonData = await getSeason(show.showId, season.seasonNum);
                 const seasonTitle = `Season ${season.seasonNum}`;
 
+                const episodeElements: JSX.Element[] = [];
                 for (const episode of season.episodes) {
                     const episodeData = await getEpisode(seasonData, episode.episodeNum);
                     const episodeAdded = new Date(episode.dateAdded);
                     const episodeTitle = `${episode.episodeNum}. ${episodeData.title} Added on ${episodeAdded.getDate()} ${months[episodeAdded.getMonth()]} ${episodeAdded.getFullYear()}`;
+                    
+                    episodeElements.push(
+                        <li key={`${show.showId}-${season.seasonNum}-${episode.episodeNum}`}>
+                            {episodeTitle}
+                        </li>
+                    );
                 }
+
+                seasonElements.push(
+                    <div key={`${show.showId}-${season.seasonNum}`}>
+                        <h3>{seasonTitle}</h3>
+                        <ul>
+                            {episodeElements}
+                        </ul>
+                    </div>
+                );
             }
+
+            elements.push(
+                <div key={show.showId} className="show-container">
+                    <img src={showImage} alt={`${showTitle} poster`} />
+                    <h2>{showTitle}</h2>
+                    <p>Number of Seasons: {numOfSeasons}</p>
+                    <p>Last Updated: {lastUpdatedString}</p>
+                    {seasonElements}
+                </div>
+            );
         }
+
+        setRenderedShows(elements);
     }
 
     useEffect(() => {
@@ -136,9 +167,7 @@ export default function Favourites({ handleNav }: FavouriteProps) {
                 <h1 className="text-slate-600 font-semibold text-3xl ml-20 pt-10 mt-auto mb-auto">Favourites</h1>
             </div>
             <div className="grid grid-cols-2 gap-10 mt-10 mx-14 border border-purple-500 border-solid">
-                <div className="w-30 h-30 bg-white">hi</div>
-                <div className="w-30 h-30 bg-white">hey</div>
-                <div className="w-30 h-30 bg-white">hello</div>
+                {renderedShows}
             </div>
         </div>
     );
