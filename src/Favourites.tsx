@@ -90,7 +90,6 @@ export default function Favourites() {
                     season.episodes.push(displayEpisode);
                 }
             });
-
             setDisplayItems(items);
         }
         createDisplayShows();
@@ -162,21 +161,7 @@ export default function Favourites() {
         fetchAndDisplayShows();
     }, [displayItems]);
 
-    // switch(sortBy) {
-    //     case 'A-Z': {
-            
-    //         break
-    //     }
-    //     case 'Z-A': {
-    //         break
-    //     }
-    //     case 'Newest': {
-    //         break
-    //     }
-    //     case 'Oldest': {
-    //         break
-    //     }
-    // }
+    
 
     function handleRemove(event: React.MouseEvent<HTMLButtonElement>) {
         const localStorageItem = event.currentTarget.parentElement?.getAttribute('id')
@@ -187,7 +172,24 @@ export default function Favourites() {
     }
 
     function handleSort(event: React.MouseEvent<HTMLButtonElement>) {
-
+        const filterChosen = event.currentTarget.value
+        if(filterChosen) {
+            switch(filterChosen) {
+                case 'A-Z': {
+                    setDisplayItems(displayItems.sort())
+                    break
+                }
+                case 'Z-A': {
+                    break
+                }
+                case 'Newest': {
+                    break
+                }
+                case 'Oldest': {
+                    break
+                }
+            }
+        }
     }
 
     const propsColor = 'border-slate-800'
