@@ -13,7 +13,7 @@ export default function Favourites({ handleNav }: FavouriteProps) {
     const [displayItems, setDisplayItems] = useState<DisplayShow[]>([]);
 
     interface FavObject {
-        showdId: string;
+        showId: string;
         seasonNum: number;
         episodeNum: number;
         dateAdded: Date;
@@ -53,11 +53,10 @@ export default function Favourites({ handleNav }: FavouriteProps) {
                 try {
                     return episode ? JSON.parse(episode) : null;
                 } catch (e) {
-                    console.error(`Error parsing JSON for episode: ${episode}`, e);
-                    return null;
+                    return
                 }
             });
-            setFavEpisodes([...newFavEpisodes]);
+            setFavEpisodes([...newFavEpisodes.filter(episode => episode !== undefined)]);
         }
         loadEpisodes();
     }, [favEpisodeStrings]);
@@ -66,35 +65,40 @@ export default function Favourites({ handleNav }: FavouriteProps) {
         function createDisplayShows() {
             console.log("Creating display shows with favEpisodes:", favEpisodes);
             let items: DisplayShow[] = [];
-
+    
             favEpisodes.forEach((episode) => {
                 if (episode) {
-                    let show = items.find(item => item.showId === episode.showdId);
+                    // Find the show in items, or create a new one if it doesn't exist
+                    let show = items.find(item => item.showId === episode.showId);
                     if (!show) {
-                        show = { showId: episode.showdId, seasons: [] };
+                        show = { showId: episode.showId, seasons: [] };
                         items.push(show);
                     }
-
+    
+                    // Find the season in show, or create a new one if it doesn't exist
                     let season = show.seasons.find(season => season.seasonNum === episode.seasonNum);
                     if (!season) {
                         season = { seasonNum: episode.seasonNum, episodes: [] };
                         show.seasons.push(season);
                     }
-
+    
+                    // Create the episode
                     const displayEpisode: DisplayEpisode = {
                         episodeNum: episode.episodeNum,
                         dateAdded: episode.dateAdded,
                     };
-
+    
+                    // Add the episode to the season
                     season.episodes.push(displayEpisode);
                 }
             });
-
+    
             console.log("Final display items:", items);
             setDisplayItems([...items]);
         }
         createDisplayShows();
     }, [favEpisodes]);
+    
 
     console.log("Display items state:", displayItems);
 
