@@ -165,11 +165,11 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     const storedTime = localStorage.getItem(`${uniqueKey}_audio`);
     if (storedTime && audioRef.current) {
       audioRef.current.currentTime = parseFloat(storedTime);
-      audioRef.current.pause(); // Ensure the audio remains paused after loading the current time
+      audioRef.current.pause();
     } else {
       if (audioRef.current) {
         audioRef.current.currentTime = 0;
-        audioRef.current.pause(); // Ensure the audio remains paused
+        audioRef.current.pause();
       }
     }
   };

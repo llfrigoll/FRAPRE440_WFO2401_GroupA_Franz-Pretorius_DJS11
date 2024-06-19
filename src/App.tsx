@@ -38,7 +38,7 @@ export default function App() {
       <Header />
       <Navbar handleNav={navHandler} isNavActive={navActive} hidepopup={hidePopUp} handleFavouritesSelected={setFavouritesSelected} handleDashboardSelected={setDashSelected}/>
       {dashSelected && <Dashboard onTileClick={showPopUp} hidepopup={hidePopUp} handleNav={navHandler} />}
-      {favouritesSelected && <Favourites handleNav={navHandler}/>}
+      {favouritesSelected && <Favourites />}
       {popUpActive && currentShow && <PopUp showId={currentShow.id} hidepopup={hidePopUp} closeModal={setModalActive}/>}
     </div>
   );

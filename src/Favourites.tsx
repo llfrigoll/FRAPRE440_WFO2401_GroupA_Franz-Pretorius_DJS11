@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Preview } from "../utils/interfaces";
-import Filters from "../components/Filters";
 import { getEpisode, getSeason, getShow } from "../utils/Api";
 import LoadIcon from "../components/LoadIcon";
-
-interface FavouriteProps {
-    handleNav: (value: boolean) => void;
-}
 
 interface FavObject {
     showId: string;
@@ -30,13 +24,13 @@ interface DisplayEpisode {
     dateAdded: string;
 }
 
-export default function Favourites({ handleNav }: FavouriteProps) {
-    const [sortFunction, setSortFunction] = useState<(a: Preview, b: Preview) => number>(() => () => 0);
+export default function Favourites() {
     const [favEpisodeStrings, setFavEpisodeStrings] = useState<(string | null)[]>([]);
     const [favEpisodes, setFavEpisodes] = useState<(FavObject | null)[]>([]);
     const [displayItems, setDisplayItems] = useState<DisplayShow[]>([]);
     const [renderedShows, setRenderedShows] = useState<JSX.Element[]>([]);
     const [loading, setLoading] = useState(false);
+    const [isRemoveClicked, setIsRemovedClicked] = useState(false)
 
     const months = [
         "January", "February", "March", "April", "May", "June",
@@ -54,7 +48,7 @@ export default function Favourites({ handleNav }: FavouriteProps) {
             setFavEpisodeStrings([...localEpisodes]);
         }
         loadLocalStorage();
-    }, [localStorage.length]);
+    }, [isRemoveClicked]);
 
     useEffect(() => {
         async function loadEpisodes() {
@@ -120,14 +114,16 @@ export default function Favourites({ handleNav }: FavouriteProps) {
                 const seasonTitle = `Season ${season.seasonNum}`;
 
                 const episodeElements: JSX.Element[] = [];
+
+                season.episodes.sort((a, b) => a.episodeNum - b.episodeNum)
                 for (const episode of season.episodes) {
                     const episodeData = await getEpisode(seasonData, episode.episodeNum);
                     const episodeAdded = new Date(episode.dateAdded);
                     const episodeTitle = `${episode.episodeNum}. ${episodeData.title} - Added: ${episodeAdded.getHours()}:${episodeAdded.getMinutes()}, ${episodeAdded.getDate()} ${months[episodeAdded.getMonth()]} ${episodeAdded.getFullYear()}`;
                     
                     episodeElements.push(
-                        <li key={`${show.showId}-${season.seasonNum}-${episode.episodeNum}`} className="font-light">
-                            <button className="text-red-500 pr-1 font-semibold hover:text-red-800">x</button> {episodeTitle}
+                        <li id={`${show.showId}_${season.seasonNum}_${episode.episodeNum}`} key={`${show.showId}-${season.seasonNum}-${episode.episodeNum}`} className="font-light">
+                            <button onClick={handleRemove} className="text-red-500 pr-1 font-semibold hover:text-red-800">x</button> {episodeTitle}
                         </li>
                     );
                 }
@@ -144,8 +140,8 @@ export default function Favourites({ handleNav }: FavouriteProps) {
             }
 
             elements.push(
-                <div data-ref="show-container" className="mb-12">
-                    <div key={show.showId} className="flex flex-row">
+                <div key={show.showId} data-ref="show-container" className="mb-12">
+                    <div className="flex flex-row">
                         <img className="h-44 w-44 mb-4 self-center rounded-lg" src={showImage} alt={`${showTitle} image`} />
                         <div className="flex flex-col pl-4 pt-2">
                             <h2 className="text-2xl font-semibold mb-3">{showTitle}</h2>
@@ -166,9 +162,33 @@ export default function Favourites({ handleNav }: FavouriteProps) {
         fetchAndDisplayShows();
     }, [displayItems]);
 
-    const handleSortChange = (sortFunc: (a: Preview, b: Preview) => number) => {
-        setSortFunction(() => sortFunc);
-    };
+    // switch(sortBy) {
+    //     case 'A-Z': {
+            
+    //         break
+    //     }
+    //     case 'Z-A': {
+    //         break
+    //     }
+    //     case 'Newest': {
+    //         break
+    //     }
+    //     case 'Oldest': {
+    //         break
+    //     }
+    // }
+
+    function handleRemove(event: React.MouseEvent<HTMLButtonElement>) {
+        const localStorageItem = event.currentTarget.parentElement?.getAttribute('id')
+        if(localStorageItem) {
+            localStorage.removeItem(localStorageItem)
+            setIsRemovedClicked(!isRemoveClicked)
+        }
+    }
+
+    function handleSort(event: React.MouseEvent<HTMLButtonElement>) {
+
+    }
 
     const propsColor = 'border-slate-800'
     if (loading) {
@@ -184,12 +204,13 @@ export default function Favourites({ handleNav }: FavouriteProps) {
             <div className="flex flex-row pb-8">
                 <h1 className="text-slate-600 font-semibold text-4xl ml-20 pt-10 mt-auto mb-auto">Favourites</h1>
                 <span className="text-slate-800 ml-auto mr-40 pt-10 mt-auto mb-auto font-medium">
-                    <button className="hover:text-light hover:text-slate-400">A-Z</button>
+                    <button onClick={handleSort} className="hover:text-light hover:text-slate-400">A-Z</button>
                     <button className="hover:text-light hover:text-slate-400 ml-10">Z-A</button>
                     <button className="hover:text-light hover:text-slate-400 ml-10">Newest</button>
                     <button className="hover:font-light hover:text-slate-400 ml-10">Oldest</button>
                 </span>
             </div>
+            {renderedShows.length === 0 ? <p className="text-center font-medium">No favourites</p>: <></>}
             <div className="grid grid-cols-2 gap-x-10 mt-10 mx-14 text-slate-800">
                 {renderedShows}
             </div>
