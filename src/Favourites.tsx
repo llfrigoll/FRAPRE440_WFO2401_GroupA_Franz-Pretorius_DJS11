@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Preview } from "../utils/interfaces";
 import Filters from "../components/Filters";
 import { getEpisode, getSeason, getShow } from "../utils/Api";
+import LoadIcon from "../components/LoadIcon";
 
 interface FavouriteProps {
     handleNav: (value: boolean) => void;
@@ -35,6 +36,7 @@ export default function Favourites({ handleNav }: FavouriteProps) {
     const [favEpisodes, setFavEpisodes] = useState<(FavObject | null)[]>([]);
     const [displayItems, setDisplayItems] = useState<DisplayShow[]>([]);
     const [renderedShows, setRenderedShows] = useState<JSX.Element[]>([]);
+    const [loading, setLoading] = useState(false);
 
     const months = [
         "January", "February", "March", "April", "May", "June",
@@ -101,6 +103,7 @@ export default function Favourites({ handleNav }: FavouriteProps) {
     }, [favEpisodes]);
 
     async function fetchAndDisplayShows() {
+        setLoading(true)
         const elements: JSX.Element[] = [];
 
         for (const show of displayItems) {
@@ -120,37 +123,43 @@ export default function Favourites({ handleNav }: FavouriteProps) {
                 for (const episode of season.episodes) {
                     const episodeData = await getEpisode(seasonData, episode.episodeNum);
                     const episodeAdded = new Date(episode.dateAdded);
-                    const episodeTitle = `${episode.episodeNum}. ${episodeData.title} Added on ${episodeAdded.getDate()} ${months[episodeAdded.getMonth()]} ${episodeAdded.getFullYear()}`;
+                    const episodeTitle = ` ${episode.episodeNum}. ${episodeData.title} - Added: ${episodeAdded.getHours()}:${episodeAdded.getMinutes()}, ${episodeAdded.getDate()} ${months[episodeAdded.getMonth()]} ${episodeAdded.getFullYear()}`;
                     
                     episodeElements.push(
-                        <li key={`${show.showId}-${season.seasonNum}-${episode.episodeNum}`}>
-                            {episodeTitle}
+                        <li key={`${show.showId}-${season.seasonNum}-${episode.episodeNum}`} className="font-light">
+                            <button className="text-red-500">x</button> {episodeTitle}
                         </li>
                     );
                 }
 
                 seasonElements.push(
-                    <div key={`${show.showId}-${season.seasonNum}`}>
-                        <h3>{seasonTitle}</h3>
-                        <ul>
+                    <div key={`${show.showId}-${season.seasonNum}`} className="pl-2 w-11/12 border border-red-500 border-solid">
+                        <h3 className="text-lg font-medium">{seasonTitle}</h3>
+                        <ul className="pb-2">
                             {episodeElements}
                         </ul>
                     </div>
+                    
                 );
             }
 
             elements.push(
-                <div key={show.showId} className="show-container">
-                    <img src={showImage} alt={`${showTitle} poster`} />
-                    <h2>{showTitle}</h2>
-                    <p>Number of Seasons: {numOfSeasons}</p>
-                    <p>Last Updated: {lastUpdatedString}</p>
+                <div data-ref="show-container" className="mb-5">
+                    <div key={show.showId} className="flex flex-row">
+                        <img className="h-44 w-44 mb-4 self-center rounded-lg" src={showImage} alt={`${showTitle} image`} />
+                        <div className="flex flex-col pl-4">
+                            <h2 className="text-2xl font-semibold mb-3">{showTitle}</h2>
+                            <p className="mb-1">Number of Seasons: {numOfSeasons}</p>
+                            <p>Last Updated: {lastUpdatedString}</p>
+                        </div>
+                    </div>
+                    <hr className="mb-2 ml-1 w-11/12 border-slate-800" />
                     {seasonElements}
                 </div>
             );
         }
-
         setRenderedShows(elements);
+        setLoading(false)
     }
 
     useEffect(() => {
@@ -161,12 +170,21 @@ export default function Favourites({ handleNav }: FavouriteProps) {
         setSortFunction(() => sortFunc);
     };
 
+    const propsColor = 'border-slate-800'
+    if (loading) {
+        return (
+            <div data-ref="dashboard-container" className="pt-20">
+                <LoadIcon iconColor ={propsColor}/>
+            </div>
+        );
+    }
+
     return (
         <div data-ref="favourites-container" className="pt-20 bg-slate-300 min-h-screen">
             <div className="flex flex-row">
                 <h1 className="text-slate-600 font-semibold text-3xl ml-20 pt-10 mt-auto mb-auto">Favourites</h1>
             </div>
-            <div className="grid grid-cols-2 gap-10 mt-10 mx-14 border border-purple-500 border-solid">
+            <div className="grid grid-cols-2 gap-x-10 mt-10 mx-14 border text-slate-800 border-purple-500 border-solid">
                 {renderedShows}
             </div>
         </div>
