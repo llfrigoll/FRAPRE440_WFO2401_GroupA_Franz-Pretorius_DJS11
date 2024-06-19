@@ -182,8 +182,6 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
       }
     }
   };
-  
-  
 
   useEffect(() => {
     if (activeEpisode) {
@@ -197,7 +195,6 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
       const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`;
       saveCurrentTime(uniqueKey);
       setActiveWatched(false);
-      
     }
   };
   
@@ -222,6 +219,16 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
       forceUpdate()
     }
   };
+
+  useEffect(() => {
+    function updateWatched(uniqueKey: string) {
+      if(activeWatched) {
+        localStorage.setItem(`${uniqueKey}_watched`, JSON.stringify(activeWatched))
+      }
+    }
+    const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode?.episode}`
+    updateWatched(uniqueKey)
+  },[activeWatched])
   
 
   useEffect(() => {
@@ -230,8 +237,8 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
       const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode!.episode}`;
       saveCurrentTime(uniqueKey);
       setRender(prev => !prev); // Trigger re-render to update title immediately
+      
     };
-  
     if (audioRef.current) {
       audioRef.current.addEventListener('ended', handleEnded);
   
@@ -240,7 +247,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
       };
     }
   }, [audioRef.current, activeEpisode, selectedSeason, showId]);
-  
+
   
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -248,14 +255,12 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         if (audioRef.current.duration > 0 && !audioRef.current.paused) {
           const confirmationMessage = 'Audio is still playing. Are you sure you want to leave?';
           event.preventDefault();
-          event.returnValue = confirmationMessage;
           return confirmationMessage;
         }
       }
     };
   
     window.addEventListener('beforeunload', handleBeforeUnload);
-  
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
@@ -307,6 +312,11 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
 
   const propsColor = 'border-slate-400'
 
+  let watchedString = <></>
+  if(localStorage.getItem(`${showId}_${selectedSeason}_${activeEpisode?.episode}_watched`) !== null){
+    watchedString = <span className="text-red-400">- Watched</span>
+  }
+
   return (
     <AnimatePresence>
       <motion.div
@@ -343,7 +353,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
                     >
                       {localStorage.getItem(`${showId}_${selectedSeason}_${activeEpisode.episode}`) ? '❤️' : '♡'}
                     </button>
-                    <h1 className="text-slate-300 text-2xl mt-1 mb-2 w-11/12 pl-1"> {activeEpisode.episode}. {activeEpisode.title} {activeWatched && <span className="text-red-400">- Watched</span>}</h1>
+                    <h1 className="text-slate-300 text-2xl mt-1 mb-2 w-11/12 pl-1"> {activeEpisode.episode}. {activeEpisode.title} {watchedString}</h1>
                   </div>
                   <p className="w-11/12 ml-4 text-slate-300 text-sm font-light pr-4 mb-4">{activeEpisode.description}</p>
                   <audio 
