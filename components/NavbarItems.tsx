@@ -8,7 +8,7 @@ interface NavItemsProps {
 }
 
 const NavbarItems: React.FC<NavItemsProps> = ({handleDashClick, handleFavClick}) => {
-  const items = ["Dashboard", "Favourites"];
+  const items = ["Dashboard", "Favourites", "Clear Listen History"];
 
   const navList = {
     visible: {
@@ -44,11 +44,26 @@ const NavbarItems: React.FC<NavItemsProps> = ({handleDashClick, handleFavClick})
     },
   };
 
+  const handleClearClick = () => {
+    if (confirm("Are you sure you want to clear your listening history?\nNote: Favourites will not be cleared.")) {
+      Object.keys(localStorage).forEach(function(key){
+        if(key.endsWith('_audio')) {
+          localStorage.removeItem(key)
+        }
+     });
+    }
+  }
+
   const itemClickHandler = (event: React.MouseEvent<HTMLParagraphElement>) => {
     if(event.currentTarget.textContent === "Dashboard") {
       handleDashClick()
     }else {
-      handleFavClick()
+      if(event.currentTarget.textContent === "Favourites"){
+        handleFavClick()
+      }else {
+        handleClearClick()
+      }
+      
     }
   }
 
@@ -62,7 +77,7 @@ const NavbarItems: React.FC<NavItemsProps> = ({handleDashClick, handleFavClick})
     >
       {items.map((item) => (
         <motion.li
-          className="text-xl text-slate-300 cursor-pointer list-none mb-7"
+          className={item === "Clear Listen History" ? "text-base text-red-200 cursor-pointer list-none mt-10 pr-6 leading-tight text-center" : "text-xl text-slate-300 cursor-pointer list-none mb-7"}
           variants={navItem}
           key={item}
         >
