@@ -183,6 +183,12 @@ export default function Favourites({ handleNav }: FavouriteProps) {
         <div data-ref="favourites-container" className="pt-20 bg-slate-300 min-h-screen">
             <div className="flex flex-row">
                 <h1 className="text-slate-600 font-semibold text-4xl ml-20 pt-10 mt-auto mb-auto">Favourites</h1>
+                <span className="text-slate-800 ml-auto mr-40 pt-10 mt-auto mb-auto font-medium">
+                    <button className="hover:text-light hover:text-slate-400">A-Z</button>
+                    <button className="hover:text-light hover:text-slate-400 ml-10">Z-A</button>
+                    <button className="hover:text-light hover:text-slate-400 ml-10">Newest</button>
+                    <button className="hover:font-light hover:text-slate-400 ml-10">Oldest</button>
+                </span>
             </div>
             <div className="grid grid-cols-2 gap-x-10 mt-10 mx-14 text-slate-800">
                 {renderedShows}
