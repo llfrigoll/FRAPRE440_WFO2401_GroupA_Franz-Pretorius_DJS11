@@ -1,10 +1,32 @@
-import React, { ReactHTMLElement, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Preview } from "../utils/interfaces";
 import Filters from "../components/Filters";
 import { getEpisode, getSeason, getShow } from "../utils/Api";
 
 interface FavouriteProps {
     handleNav: (value: boolean) => void;
+}
+
+interface FavObject {
+    showId: string;
+    seasonNum: number;
+    episodeNum: number;
+    dateAdded: string; // Using string instead of Date for localStorage compatibility
+}
+
+interface DisplayShow {
+    showId: string;
+    seasons: DisplaySeason[];
+}
+
+interface DisplaySeason {
+    seasonNum: number;
+    episodes: DisplayEpisode[];
+}
+
+interface DisplayEpisode {
+    episodeNum: number;
+    dateAdded: string;
 }
 
 export default function Favourites({ handleNav }: FavouriteProps) {
@@ -16,34 +38,12 @@ export default function Favourites({ handleNav }: FavouriteProps) {
     const months = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
-      ];
-
-    interface FavObject {
-        showId: string;
-        seasonNum: number;
-        episodeNum: number;
-        dateAdded: Date;
-    }
-
-    interface DisplayShow {
-        showId: string;
-        seasons: DisplaySeason[];
-    }
-
-    interface DisplaySeason {
-        seasonNum: number;
-        episodes: DisplayEpisode[];
-    }
-
-    interface DisplayEpisode {
-        episodeNum: number;
-        dateAdded: Date;
-    }
+    ];
 
     useEffect(() => {
         async function loadLocalStorage() {
-            let localEpisodes: (string | null)[] = [];
-            Object.keys(localStorage).forEach(function (key) {
+            const localEpisodes: (string | null)[] = [];
+            Object.keys(localStorage).forEach((key) => {
                 if (!key.endsWith('_audio')) {
                     localEpisodes.push(localStorage.getItem(key));
                 }
@@ -57,81 +57,74 @@ export default function Favourites({ handleNav }: FavouriteProps) {
         async function loadEpisodes() {
             const newFavEpisodes: (FavObject | null)[] = favEpisodeStrings.map(episode => {
                 try {
-                    return episode ? JSON.parse(episode) : null;
+                    return episode ? JSON.parse(episode) as FavObject : null;
                 } catch (e) {
-                    return
+                    return null;
                 }
             });
-            setFavEpisodes([...newFavEpisodes.filter(episode => episode !== undefined)]);
+            setFavEpisodes(newFavEpisodes.filter(episode => episode !== null));
         }
         loadEpisodes();
     }, [favEpisodeStrings]);
 
     useEffect(() => {
         function createDisplayShows() {
-            let items: DisplayShow[] = [];
-    
+            const items: DisplayShow[] = [];
+
             favEpisodes.forEach((episode) => {
                 if (episode) {
-                    // Find the show in items, or create a new one if it doesn't exist
                     let show = items.find(item => item.showId === episode.showId);
                     if (!show) {
                         show = { showId: episode.showId, seasons: [] };
                         items.push(show);
                     }
-    
-                    // Find the season in show, or create a new one if it doesn't exist
+
                     let season = show.seasons.find(season => season.seasonNum === episode.seasonNum);
                     if (!season) {
                         season = { seasonNum: episode.seasonNum, episodes: [] };
                         show.seasons.push(season);
                     }
-    
-                    // Create the episode
+
                     const displayEpisode: DisplayEpisode = {
                         episodeNum: episode.episodeNum,
                         dateAdded: episode.dateAdded,
                     };
-    
-                    // Add the episode to the season
+
                     season.episodes.push(displayEpisode);
                 }
             });
-    
-            setDisplayItems([...items]);
+
+            setDisplayItems(items);
         }
         createDisplayShows();
     }, [favEpisodes]);
 
-    let tileContainer = 
+    let tileContainer = <></>
     async function fetchAndDisplayShows() {
-        displayItems.forEach(async show => {
-            const showData = await getShow(show.showId)
-            const showImage = showData.image
-            const showTitle = showData.title
-            const numOfSeasons = showData.seasons.length
-            const lastUpdatedDate = new Date(showData.updated)
-            const lastUpdatedString = `${lastUpdatedDate.getDate()} ${months[lastUpdatedDate.getMonth()]} ${lastUpdatedDate.getFullYear()}`
+        for (const show of displayItems) {
+            const showData = await getShow(show.showId);
+            const showImage = showData.image;
+            const showTitle = showData.title;
+            const numOfSeasons = showData.seasons.length;
+            const lastUpdatedDate = new Date(showData.updated);
+            const lastUpdatedString = `${lastUpdatedDate.getDate()} ${months[lastUpdatedDate.getMonth()]} ${lastUpdatedDate.getFullYear()}`;
 
-            
+            for (const season of show.seasons) {
+                const seasonData = await getSeason(show.showId, season.seasonNum);
+                const seasonTitle = `Season ${season.seasonNum}`;
 
-            show.seasons.forEach(async season => {
-                const seasonData = await getSeason(show.showId, season.seasonNum)
-                const seasonTitle = `Season ${season.seasonNum}`
-
-                season.episodes.forEach(async episode => {
-                    const episodeData = await getEpisode(seasonData, episode.episodeNum)
-                    const episodeAdded = new Date(episode.dateAdded)
-                    const episodeTitle = `${episode.episodeNum}. ${episodeData.title} Added on ${episodeAdded.getDate()} ${months[episodeAdded.getMonth()]} ${episodeAdded.getFullYear()}`
-                })
-            })
-        })
+                for (const episode of season.episodes) {
+                    const episodeData = await getEpisode(seasonData, episode.episodeNum);
+                    const episodeAdded = new Date(episode.dateAdded);
+                    const episodeTitle = `${episode.episodeNum}. ${episodeData.title} Added on ${episodeAdded.getDate()} ${months[episodeAdded.getMonth()]} ${episodeAdded.getFullYear()}`;
+                }
+            }
+        }
     }
 
     useEffect(() => {
-        fetchAndDisplayShows()
-    },[displayItems])
-    
+        fetchAndDisplayShows();
+    }, [displayItems]);
 
     const handleSortChange = (sortFunc: (a: Preview, b: Preview) => number) => {
         setSortFunction(() => sortFunc);
