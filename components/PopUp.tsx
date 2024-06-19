@@ -154,7 +154,55 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
     forceUpdate(); // Forces the component to re-render
   }
 
+  const saveCurrentTime = (uniqueKey: string) => {
+    if (audioRef.current) {
+      const currentTime = audioRef.current.currentTime;
+      localStorage.setItem(`${uniqueKey}_audio`, currentTime.toString());
+    }
+  };
+
+  const loadCurrentTime = (uniqueKey: string) => {
+    const storedTime = localStorage.getItem(`${uniqueKey}_audio`);
+    if (storedTime && audioRef.current) {
+      audioRef.current.currentTime = parseFloat(storedTime);
+      audioRef.current.pause(); // Ensure the audio remains paused after loading the current time
+    } else {
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+        audioRef.current.pause(); // Ensure the audio remains paused
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (activeEpisode) {
+      const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`;
+      loadCurrentTime(uniqueKey);
+    }
+  }, [activeEpisode]);
+
+  const handlePlay = () => {
+    if (activeEpisode) {
+      const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`;
+      saveCurrentTime(uniqueKey);
+    }
+  };
+
+  const handlePause = () => {
+    if (activeEpisode) {
+      const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`;
+      saveCurrentTime(uniqueKey);
+    }
+  };
+
   const handleEpisodeClick = (newEpisode: Episode) => {
+    if (audioRef.current) {
+      audioRef.current.pause()
+    }
+    if (activeEpisode) {
+      const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`;
+      saveCurrentTime(uniqueKey);
+    }
     setActiveEpisode(newEpisode);
   };
 
@@ -167,6 +215,13 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         }
     }
   });
+
+  if(audioRef.current) {
+    if(audioRef.current.duration === audioRef.current.currentTime) {
+      console.log('ended')
+    }
+  }
+
 
   const handleBackClick = () => {
     setActiveEpisode(null);
@@ -249,7 +304,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
                     >
                       {localStorage.getItem(`${showId}_${selectedSeason}_${activeEpisode.episode}`) ? '❤️' : '♡'}
                     </button>
-                    <h1 className="text-slate-300 text-2xl mt-1 mb-2 w-11/12 pl-1"> {activeEpisode.episode}. {activeEpisode.title}</h1>
+                    <h1 className="text-slate-300 text-2xl mt-1 mb-2 w-11/12 pl-1">{activeEpisode.episode}. {activeEpisode.title}</h1>
                   </div>
                   <p className="w-11/12 ml-4 text-slate-300 text-sm font-light pr-4 mb-4">{activeEpisode.description}</p>
                   <audio 
@@ -258,6 +313,8 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
                     autoPlay={false}
                     data-ref="audio-player" 
                     className="w-11/12 ml-4"
+                    onPlay={handlePlay}
+                    onPause={handlePause}
                   >
                     <source src={activeEpisode.file} type="audio/mp3"/>
                   </audio>
