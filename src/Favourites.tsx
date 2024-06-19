@@ -123,17 +123,17 @@ export default function Favourites({ handleNav }: FavouriteProps) {
                 for (const episode of season.episodes) {
                     const episodeData = await getEpisode(seasonData, episode.episodeNum);
                     const episodeAdded = new Date(episode.dateAdded);
-                    const episodeTitle = ` ${episode.episodeNum}. ${episodeData.title} - Added: ${episodeAdded.getHours()}:${episodeAdded.getMinutes()}, ${episodeAdded.getDate()} ${months[episodeAdded.getMonth()]} ${episodeAdded.getFullYear()}`;
+                    const episodeTitle = `${episode.episodeNum}. ${episodeData.title} - Added: ${episodeAdded.getHours()}:${episodeAdded.getMinutes()}, ${episodeAdded.getDate()} ${months[episodeAdded.getMonth()]} ${episodeAdded.getFullYear()}`;
                     
                     episodeElements.push(
                         <li key={`${show.showId}-${season.seasonNum}-${episode.episodeNum}`} className="font-light">
-                            <button className="text-red-500">x</button> {episodeTitle}
+                            <button className="text-red-500 pr-1 font-semibold hover:text-red-800">x</button> {episodeTitle}
                         </li>
                     );
                 }
 
                 seasonElements.push(
-                    <div key={`${show.showId}-${season.seasonNum}`} className="pl-2 w-11/12 border border-red-500 border-solid">
+                    <div key={`${show.showId}-${season.seasonNum}`} className="pl-2 w-11/12 ">
                         <h3 className="text-lg font-medium">{seasonTitle}</h3>
                         <ul className="pb-2">
                             {episodeElements}
@@ -144,10 +144,10 @@ export default function Favourites({ handleNav }: FavouriteProps) {
             }
 
             elements.push(
-                <div data-ref="show-container" className="mb-5">
+                <div data-ref="show-container" className="mb-12">
                     <div key={show.showId} className="flex flex-row">
                         <img className="h-44 w-44 mb-4 self-center rounded-lg" src={showImage} alt={`${showTitle} image`} />
-                        <div className="flex flex-col pl-4">
+                        <div className="flex flex-col pl-4 pt-2">
                             <h2 className="text-2xl font-semibold mb-3">{showTitle}</h2>
                             <p className="mb-1">Number of Seasons: {numOfSeasons}</p>
                             <p>Last Updated: {lastUpdatedString}</p>
@@ -182,9 +182,9 @@ export default function Favourites({ handleNav }: FavouriteProps) {
     return (
         <div data-ref="favourites-container" className="pt-20 bg-slate-300 min-h-screen">
             <div className="flex flex-row">
-                <h1 className="text-slate-600 font-semibold text-3xl ml-20 pt-10 mt-auto mb-auto">Favourites</h1>
+                <h1 className="text-slate-600 font-semibold text-4xl ml-20 pt-10 mt-auto mb-auto">Favourites</h1>
             </div>
-            <div className="grid grid-cols-2 gap-x-10 mt-10 mx-14 border text-slate-800 border-purple-500 border-solid">
+            <div className="grid grid-cols-2 gap-x-10 mt-10 mx-14 text-slate-800">
                 {renderedShows}
             </div>
         </div>
