@@ -103,30 +103,32 @@ export default function Favourites({ handleNav }: FavouriteProps) {
         createDisplayShows();
     }, [favEpisodes]);
 
-    useEffect(() => {
-        async function fetchAndDisplayShows() {
-            displayItems.forEach(async show => {
-                const showData = await getShow(show.showId)
-                const showImage = showData.image
-                const showTitle = showData.title
-                const numOfSeasons = showData.seasons.length
-                const lastUpdatedDate = new Date(showData.updated)
-                const lastUpdatedString = `${lastUpdatedDate.getDate()} ${months[lastUpdatedDate.getMonth()]} ${lastUpdatedDate.getFullYear()}`
+    let tileContainer = 
+    async function fetchAndDisplayShows() {
+        displayItems.forEach(async show => {
+            const showData = await getShow(show.showId)
+            const showImage = showData.image
+            const showTitle = showData.title
+            const numOfSeasons = showData.seasons.length
+            const lastUpdatedDate = new Date(showData.updated)
+            const lastUpdatedString = `${lastUpdatedDate.getDate()} ${months[lastUpdatedDate.getMonth()]} ${lastUpdatedDate.getFullYear()}`
 
-                
+            
 
-                show.seasons.forEach(async season => {
-                    const seasonData = await getSeason(show.showId, season.seasonNum)
-                    const seasonTitle = `Season ${season.seasonNum}`
+            show.seasons.forEach(async season => {
+                const seasonData = await getSeason(show.showId, season.seasonNum)
+                const seasonTitle = `Season ${season.seasonNum}`
 
-                    season.episodes.forEach(async episode => {
-                        const episodeData = await getEpisode(seasonData, episode.episodeNum)
-                        const episodeAdded = new Date(episode.dateAdded)
-                        const episodeTitle = `${episode.episodeNum}. ${episodeData.title} Added on ${episodeAdded.getDate()} ${months[episodeAdded.getMonth()]} ${episodeAdded.getFullYear()}`
-                    })
+                season.episodes.forEach(async episode => {
+                    const episodeData = await getEpisode(seasonData, episode.episodeNum)
+                    const episodeAdded = new Date(episode.dateAdded)
+                    const episodeTitle = `${episode.episodeNum}. ${episodeData.title} Added on ${episodeAdded.getDate()} ${months[episodeAdded.getMonth()]} ${episodeAdded.getFullYear()}`
                 })
             })
-        }
+        })
+    }
+
+    useEffect(() => {
         fetchAndDisplayShows()
     },[displayItems])
     
