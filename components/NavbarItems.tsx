@@ -50,7 +50,7 @@ const NavbarItems: React.FC<NavItemsProps> = ({handleDashClick, handleFavClick})
         if(key.endsWith('_audio')) {
           localStorage.removeItem(key)
         }
-     });
+      })
     }
   }
 
