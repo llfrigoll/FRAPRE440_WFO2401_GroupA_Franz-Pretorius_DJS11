@@ -34,6 +34,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
   const [activeEpisode, setActiveEpisode] = useState<Episode | null>(null)
   const [_, setRender] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [activeWatched, setActiveWatched] = useState(false)
 
   const forceUpdate = () => setRender(prev => !prev);
 
@@ -157,71 +158,109 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
   const saveCurrentTime = (uniqueKey: string) => {
     if (audioRef.current) {
       const currentTime = audioRef.current.currentTime;
-      localStorage.setItem(`${uniqueKey}_audio`, currentTime.toString());
+      const endedStatus = audioRef.current.ended
+      const audioData = {
+        'currentTime': currentTime,
+        'endedStatus' : endedStatus
+      }
+      localStorage.setItem(`${uniqueKey}_audio`, JSON.stringify(audioData));
     }
   };
 
   const loadCurrentTime = (uniqueKey: string) => {
-    const storedTime = localStorage.getItem(`${uniqueKey}_audio`);
-    if (storedTime && audioRef.current) {
-      audioRef.current.currentTime = parseFloat(storedTime);
-      audioRef.current.pause(); // Ensure the audio remains paused after loading the current time
-    } else {
-      if (audioRef.current) {
-        audioRef.current.currentTime = 0;
-        audioRef.current.pause(); // Ensure the audio remains paused
+    const audioData = localStorage.getItem(`${uniqueKey}_audio`);
+    if (audioData) {
+      const storedTime = JSON.parse(audioData)['currentTime'];
+      if (storedTime && audioRef.current) {
+        audioRef.current.currentTime = parseFloat(storedTime);
+        audioRef.current.pause();
+      } else {
+        if (audioRef.current) {
+          audioRef.current.currentTime = 0;
+          audioRef.current.pause();
+        }
       }
     }
   };
+  
+  
 
   useEffect(() => {
     if (activeEpisode) {
       const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`;
       loadCurrentTime(uniqueKey);
     }
-  }, [activeEpisode]);
+  }, [activeEpisode, activeWatched]);
 
   const handlePlay = () => {
     if (activeEpisode) {
       const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`;
       saveCurrentTime(uniqueKey);
+      setActiveWatched(false);
+      
     }
   };
-
+  
   const handlePause = () => {
     if (activeEpisode) {
       const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`;
       saveCurrentTime(uniqueKey);
     }
   };
-
+  
   const handleEpisodeClick = (newEpisode: Episode) => {
     if (audioRef.current) {
-      audioRef.current.pause()
+      audioRef.current.pause();
     }
-    if (activeEpisode) {
-      const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`;
-      saveCurrentTime(uniqueKey);
+    if (activeEpisode && activeEpisode.episode === newEpisode.episode) {
+      setActiveEpisode(null);
+      setSelectedSeason(-1);
+    } else {
+      const uniqueKey = `${showId}_${selectedSeason}_${newEpisode.episode}`;
+      loadCurrentTime(uniqueKey);
+      setActiveEpisode(newEpisode);
+      forceUpdate()
     }
-    setActiveEpisode(newEpisode);
   };
+  
 
-  window.addEventListener('beforeunload', (event: BeforeUnloadEvent) => {
-    if(audioRef.current) {
-        if(audioRef.current.duration > 0 && !audioRef.current.paused) {
+  useEffect(() => {
+    const handleEnded = () => {
+      setActiveWatched(true);
+      const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode!.episode}`;
+      saveCurrentTime(uniqueKey);
+      setRender(prev => !prev); // Trigger re-render to update title immediately
+    };
+  
+    if (audioRef.current) {
+      audioRef.current.addEventListener('ended', handleEnded);
+  
+      return () => {
+        audioRef.current!.removeEventListener('ended', handleEnded);
+      };
+    }
+  }, [audioRef.current, activeEpisode, selectedSeason, showId]);
+  
+  
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (audioRef.current) {
+        if (audioRef.current.duration > 0 && !audioRef.current.paused) {
           const confirmationMessage = 'Audio is still playing. Are you sure you want to leave?';
-          event.preventDefault(); 
-          return confirmationMessage; 
+          event.preventDefault();
+          event.returnValue = confirmationMessage;
+          return confirmationMessage;
         }
-    }
-  });
-
-  if(audioRef.current) {
-    if(audioRef.current.duration === audioRef.current.currentTime) {
-      console.log('ended')
-    }
-  }
-
+      }
+    };
+  
+    window.addEventListener('beforeunload', handleBeforeUnload);
+  
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+  
 
   const handleBackClick = () => {
     setActiveEpisode(null);
@@ -304,7 +343,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
                     >
                       {localStorage.getItem(`${showId}_${selectedSeason}_${activeEpisode.episode}`) ? '❤️' : '♡'}
                     </button>
-                    <h1 className="text-slate-300 text-2xl mt-1 mb-2 w-11/12 pl-1">{activeEpisode.episode}. {activeEpisode.title}</h1>
+                    <h1 className="text-slate-300 text-2xl mt-1 mb-2 w-11/12 pl-1"> {activeEpisode.episode}. {activeEpisode.title} {activeWatched && <span className="text-red-400">- Watched</span>}</h1>
                   </div>
                   <p className="w-11/12 ml-4 text-slate-300 text-sm font-light pr-4 mb-4">{activeEpisode.description}</p>
                   <audio 
