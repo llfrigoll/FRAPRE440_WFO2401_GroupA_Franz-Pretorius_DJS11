@@ -13,6 +13,11 @@ export default function Favourites({ handleNav }: FavouriteProps) {
     const [favEpisodes, setFavEpisodes] = useState<(FavObject | null)[]>([]);
     const [displayItems, setDisplayItems] = useState<DisplayShow[]>([]);
 
+    const months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ];
+
     interface FavObject {
         showId: string;
         seasonNum: number;
@@ -99,13 +104,14 @@ export default function Favourites({ handleNav }: FavouriteProps) {
     }, [favEpisodes]);
 
     useEffect(() => {
-        async function fetchShows() {
+        async function fetchAndDisplayShows() {
             displayItems.forEach(async show => {
                 const showData = await getShow(show.showId)
                 const showImage = showData.image
                 const showTitle = showData.title
                 const numOfSeasons = showData.seasons.length
-                const lastUpdated = new Date(showData.updated)
+                const lastUpdatedDate = new Date(showData.updated)
+                const lastUpdatedString = `${lastUpdatedDate.getDate()} ${months[lastUpdatedDate.getMonth()]} ${lastUpdatedDate.getFullYear()}`
 
                 show.seasons.forEach(async season => {
                     const seasonData = await getSeason(show.showId, season.seasonNum)
@@ -113,12 +119,13 @@ export default function Favourites({ handleNav }: FavouriteProps) {
 
                     season.episodes.forEach(async episode => {
                         const episodeData = await getEpisode(seasonData, episode.episodeNum)
-                        const episodeTitle = `${episode.episodeNum}. ${episodeData.title} Added on ${}`
+                        const episodeAdded = new Date(episode.dateAdded)
+                        const episodeTitle = `${episode.episodeNum}. ${episodeData.title} Added on ${episodeAdded.getDate()} ${months[episodeAdded.getMonth()]} ${episodeAdded.getFullYear()}`
                     })
                 })
             })
         }
-        fetchShows()
+        fetchAndDisplayShows()
     },[displayItems])
     
 
