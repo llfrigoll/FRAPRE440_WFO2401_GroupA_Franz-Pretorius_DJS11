@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { ReactHTMLElement, useEffect, useState } from "react";
 import { Preview } from "../utils/interfaces";
 import Filters from "../components/Filters";
 import { getEpisode, getSeason, getShow } from "../utils/Api";
@@ -113,6 +113,8 @@ export default function Favourites({ handleNav }: FavouriteProps) {
                 const lastUpdatedDate = new Date(showData.updated)
                 const lastUpdatedString = `${lastUpdatedDate.getDate()} ${months[lastUpdatedDate.getMonth()]} ${lastUpdatedDate.getFullYear()}`
 
+                
+
                 show.seasons.forEach(async season => {
                     const seasonData = await getSeason(show.showId, season.seasonNum)
                     const seasonTitle = `Season ${season.seasonNum}`
@@ -134,9 +136,14 @@ export default function Favourites({ handleNav }: FavouriteProps) {
     };
 
     return (
-        <div data-ref="favourites-container" className="pt-20 bg-slate-300 min-h-screen border border-purple-500 border-solid">
+        <div data-ref="favourites-container" className="pt-20 bg-slate-300 min-h-screen">
             <div className="flex flex-row">
                 <h1 className="text-slate-600 font-semibold text-3xl ml-20 pt-10 mt-auto mb-auto">Favourites</h1>
+            </div>
+            <div className="grid grid-cols-2 gap-10 mt-10 mx-14 border border-purple-500 border-solid">
+                <div className="w-30 h-30 bg-white">hi</div>
+                <div className="w-30 h-30 bg-white">hey</div>
+                <div className="w-30 h-30 bg-white">hello</div>
             </div>
         </div>
     );
