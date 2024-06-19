@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Preview } from "../utils/interfaces";
 import Filters from "../components/Filters";
-import { getShow } from "../utils/Api";
+import { getEpisode, getSeason, getShow } from "../utils/Api";
 
 interface FavouriteProps {
     handleNav: (value: boolean) => void;
@@ -107,7 +107,15 @@ export default function Favourites({ handleNav }: FavouriteProps) {
                 const numOfSeasons = showData.seasons.length
                 const lastUpdated = new Date(showData.updated)
 
-                show.seasons.forEach(season => )
+                show.seasons.forEach(async season => {
+                    const seasonData = await getSeason(show.showId, season.seasonNum)
+                    const seasonTitle = `Season ${season.seasonNum}`
+
+                    season.episodes.forEach(async episode => {
+                        const episodeData = await getEpisode(seasonData, episode.episodeNum)
+                        const episodeTitle = `${episode.episodeNum}. ${episodeData.title} Added on ${}`
+                    })
+                })
             })
         }
         fetchShows()
