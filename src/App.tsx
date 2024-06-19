@@ -8,6 +8,7 @@ import { Preview } from '../utils/interfaces';
 import Favourites from './Favourites'
 
 export default function App() {
+  //localStorage.clear()
   const [modalActive, setModalActive] = useState(false);
   const [navActive, setNavActive] = useState(false);
   const [popUpActive, setPopUpActive] = useState(false);

@@ -139,7 +139,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
       showId: showId,
       seasonNum: selectedSeason,
       episodeNum: activeEpisode.episode,
-      dateAdded: new Date()
+      dateAdded: new Date().toISOString()
     };
 
     const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`;
@@ -221,7 +221,6 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
       console.log('ended')
     }
   }
-
 
   const handleBackClick = () => {
     setActiveEpisode(null);
