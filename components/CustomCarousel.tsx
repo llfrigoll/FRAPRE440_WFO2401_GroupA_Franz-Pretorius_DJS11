@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Carousel } from 'react-bootstrap'
-import poddLogo from '../images/Podd_Logo.png'
 import { getAllPreviews, getGenres } from '../utils/Api'
 import { Genre, Preview } from '../utils/interfaces'
 import LoadIcon from './LoadIcon'

@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import Select, { StylesConfig, SingleValue } from 'react-select'
-import { getAllPreviews, getGenres } from '../utils/Api'
-import { Genre, Preview } from '../utils/interfaces'
+import { getGenres } from '../utils/Api'
+import { Preview } from '../utils/interfaces'
 import LoadIcon from './LoadIcon'
 
 interface OptionType {
