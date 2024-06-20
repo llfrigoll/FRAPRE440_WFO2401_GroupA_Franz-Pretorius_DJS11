@@ -12,6 +12,7 @@ interface FavObject {
 interface DisplayShow {
     showId: string;
     seasons: DisplaySeason[];
+    updated: string;
 }
 
 interface DisplaySeason {
@@ -65,14 +66,15 @@ export default function Favourites() {
     }, [favEpisodeStrings]);
 
     useEffect(() => {
-        function createDisplayShows() {
+        async function createDisplayShows() {
             const items: DisplayShow[] = [];
 
-            favEpisodes.forEach((episode) => {
+            for (const episode of favEpisodes) {
                 if (episode) {
                     let show = items.find(item => item.showId === episode.showId);
                     if (!show) {
-                        show = { showId: episode.showId, seasons: [] };
+                        const showData = await getShow(episode.showId);
+                        show = { showId: episode.showId, seasons: [], updated: showData.updated };
                         items.push(show);
                     }
 
@@ -89,7 +91,7 @@ export default function Favourites() {
 
                     season.episodes.push(displayEpisode);
                 }
-            });
+            }
             setDisplayItems(items);
         }
         createDisplayShows();
@@ -104,7 +106,7 @@ export default function Favourites() {
             const showImage = showData.image;
             const showTitle = showData.title;
             const numOfSeasons = showData.seasons.length;
-            const lastUpdatedDate = new Date(showData.updated);
+            const lastUpdatedDate = new Date(show.updated);
             const lastUpdatedString = `${lastUpdatedDate.getDate()} ${months[lastUpdatedDate.getMonth()]} ${lastUpdatedDate.getFullYear()}`;
 
             const seasonElements: JSX.Element[] = [];
@@ -161,8 +163,6 @@ export default function Favourites() {
         fetchAndDisplayShows();
     }, [displayItems]);
 
-    
-
     function handleRemove(event: React.MouseEvent<HTMLButtonElement>) {
         const localStorageItem = event.currentTarget.parentElement?.getAttribute('id')
         if(localStorageItem) {
@@ -204,11 +204,9 @@ export default function Favourites() {
                 }
                 case 'Newest': {
                     const sortedItems = [...displayItems].sort((a, b) => {
-                        const showA = a.showId.toLowerCase();
-                        const showB = b.showId.toLowerCase();
-                        if (showA < showB) return -1;
-                        if (showA > showB) return 1;
-                        return 0;
+                        const dateA = new Date(a.updated);
+                        const dateB = new Date(b.updated);
+                        return dateB.getTime() - dateA.getTime();
                     });
                     setDisplayItems(sortedItems);
                     event.currentTarget.classList.add('underline')
@@ -216,11 +214,9 @@ export default function Favourites() {
                 }
                 case 'Oldest': {
                     const sortedItems = [...displayItems].sort((a, b) => {
-                        const showA = a.showId.toLowerCase();
-                        const showB = b.showId.toLowerCase();
-                        if (showA < showB) return -1;
-                        if (showA > showB) return 1;
-                        return 0;
+                        const dateA = new Date(a.updated);
+                        const dateB = new Date(b.updated);
+                        return dateA.getTime() - dateB.getTime();
                     });
                     setDisplayItems(sortedItems);
                     event.currentTarget.classList.add('underline')
@@ -245,9 +241,9 @@ export default function Favourites() {
                 <h1 className="text-slate-600 font-semibold text-4xl ml-20 pt-10 mt-auto mb-auto">Favourites</h1>
                 <span className="text-slate-800 ml-auto mr-40 pt-10 mt-auto mb-auto font-medium">
                     <button onClick={handleSort} className="hover:text-light hover:text-slate-400">A-Z</button>
-                    <button className="hover:text-light hover:text-slate-400 ml-10">Z-A</button>
-                    <button className="hover:text-light hover:text-slate-400 ml-10">Newest</button>
-                    <button className="hover:font-light hover:text-slate-400 ml-10">Oldest</button>
+                    <button onClick={handleSort} className="hover:text-light hover:text-slate-400 ml-10">Z-A</button>
+                    <button onClick={handleSort} className="hover:text-light hover:text-slate-400 ml-10">Newest</button>
+                    <button onClick={handleSort} className="hover:text-light hover:text-slate-400 ml-10">Oldest</button>
                 </span>
             </div>
             {renderedShows.length === 0 ? <p className="text-center font-medium">No favourites</p>: <></>}
