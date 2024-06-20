@@ -115,7 +115,9 @@ export default function Dashboard({ onTileClick, hidepopup, handleNav }: Dashboa
               onSortChange={handleSortChange}
             />
           </div>
-          <CustomCarousel />
+          <hr className="mx-10 mt-4"/>
+          <CustomCarousel/>
+          <hr className="mx-10 mb-4"/>
           <div
             data-ref="tile-container"
             className="grid grid-cols-5 gap-12 p-10"
