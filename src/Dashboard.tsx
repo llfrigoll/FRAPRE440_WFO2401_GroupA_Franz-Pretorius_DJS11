@@ -5,7 +5,8 @@ import LoadIcon from '../components/LoadIcon';
 import PodcastTile from '../components/PodcastTile';
 import Filters from '../components/Filters';
 import SearchBar from '../components/SearchBar';
-import { Carousel } from "react-bootstrap";
+import CustomCarousel from '../components/CustomCarousel'
+
 
 interface DashboardProps {
     onTileClick: (show: Preview) => void;
@@ -95,18 +96,39 @@ export default function Dashboard({ onTileClick, hidepopup, handleNav }: Dashboa
     ));
 
     return (
-        <>
-            <SearchBar onSearchTextChange={handleSearchTextChange} hidepopup={hidepopup} handleNav={handleNav}/>
-            <div data-ref="dashboard-container" className="pt-20 bg-slate-300 transition-all min-h-screen">
-                <Carousel></Carousel>
-                <div className="flex flex-row">
-                    <h1 className="text-slate-600 font-semibold text-4xl ml-20 pt-10 mt-auto mb-auto">Podcasts</h1> 
-                    <Filters onGenreChange={handleGenreChange} onSortChange={handleSortChange} />
-                </div>
-                <div data-ref="tile-container" className="grid grid-cols-5 gap-10 p-10">
-                    {previewTiles.length === 0 ? <div className="col-span-5 mx-auto font-medium">No results found.</div> : previewTiles}
-                </div>
-            </div>
-        </>
+      <>
+        <SearchBar
+          onSearchTextChange={handleSearchTextChange}
+          hidepopup={hidepopup}
+          handleNav={handleNav}
+        />
+        <div
+          data-ref="dashboard-container"
+          className="pt-20 bg-slate-300 transition-all min-h-screen"
+        >
+          <div className="flex flex-row">
+            <h1 className="text-slate-600 font-semibold text-4xl ml-20 pt-10 mt-auto mb-auto">
+              Podcasts
+            </h1>
+            <Filters
+              onGenreChange={handleGenreChange}
+              onSortChange={handleSortChange}
+            />
+          </div>
+          <CustomCarousel />
+          <div
+            data-ref="tile-container"
+            className="grid grid-cols-5 gap-12 p-10"
+          >
+            {previewTiles.length === 0 ? (
+              <div className="col-span-5 mx-auto font-medium">
+                No results found.
+              </div>
+            ) : (
+              previewTiles
+            )}
+          </div>
+        </div>
+      </>
     );
 }

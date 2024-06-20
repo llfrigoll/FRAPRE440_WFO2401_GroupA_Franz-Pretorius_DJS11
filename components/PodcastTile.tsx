@@ -28,7 +28,7 @@ export default function PodcastTile({propsPreview, propsGenres, onTileClick}: Po
     <div
       onClick={clickHandler}
       data-ref="preview-tile"
-      className="h-100 w-50 pt-6 pb-6 flex flex-col items-start rounded-xl bg-white cursor-pointer hover:opacity-75"
+      className="pt-6 pb-6 flex flex-col items-start rounded-xl bg-white cursor-pointer hover:opacity-75"
     >
       <img src={image} className="h-44 w-44 mb-5 self-center rounded-lg" alt={title} />
       <div data-ref="preview-content" className="flex flex-col px-6 max-w-full">

@@ -27,7 +27,7 @@ export default function SearchBar({ onSearchTextChange, hidepopup, handleNav }: 
     }
 
     return (
-        <div data-ref="search-bar" className="fixed right-16 pt-5 mb-auto z-50">
+        <div data-ref="search-bar" className="fixed right-16 top-4 z-50">
             <input
                 onFocus={focusHandler}
                 onChange={handleTextChange}
