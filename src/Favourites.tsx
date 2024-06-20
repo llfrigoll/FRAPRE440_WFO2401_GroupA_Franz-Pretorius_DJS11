@@ -11,6 +11,7 @@ interface FavObject {
 
 interface DisplayShow {
     showId: string;
+    title: string;
     seasons: DisplaySeason[];
     updated: string;
 }
@@ -75,7 +76,7 @@ export default function Favourites() {
                     let show = items.find(item => item.showId === episode.showId);
                     if (!show) {
                         const showData = await getShow(episode.showId);
-                        show = { showId: episode.showId, seasons: [], updated: showData.updated.toString() };
+                        show = { showId: episode.showId, title: showData.title, seasons: [], updated: showData.updated.toString() };
                         items.push(show);
                     }
 
@@ -165,10 +166,10 @@ export default function Favourites() {
     }, [displayItems]);
 
     function handleRemove(event: React.MouseEvent<HTMLButtonElement>) {
-        const localStorageItem = event.currentTarget.parentElement?.getAttribute('id')
-        if(localStorageItem) {
-            localStorage.removeItem(localStorageItem)
-            setIsRemovedClicked(!isRemoveClicked)
+        const localStorageItem = event.currentTarget.parentElement?.getAttribute('id');
+        if (localStorageItem) {
+            localStorage.removeItem(localStorageItem);
+            setIsRemovedClicked(!isRemoveClicked);
         }
     }
 
@@ -177,25 +178,17 @@ export default function Favourites() {
         setSelectedFilter(filterChosen); // Update the selected filter
 
         if (filterChosen) {
-            switch(filterChosen) {
+            switch (filterChosen) {
                 case 'A-Z': {
                     const sortedItems = [...displayItems].sort((a, b) => {
-                        const showA = a.showId.toLowerCase();
-                        const showB = b.showId.toLowerCase();
-                        if (showA < showB) return -1;
-                        if (showA > showB) return 1;
-                        return 0;
+                        return a.title.localeCompare(b.title, undefined, { numeric: true });
                     });
                     setDisplayItems(sortedItems);
                     break;
                 }
                 case 'Z-A': {
                     const sortedItems = [...displayItems].sort((a, b) => {
-                        const showA = a.showId.toLowerCase();
-                        const showB = b.showId.toLowerCase();
-                        if (showA < showB) return 1;
-                        if (showA > showB) return -1;
-                        return 0;
+                        return b.title.localeCompare(a.title, undefined, { numeric: true });
                     });
                     setDisplayItems(sortedItems);
                     break;
@@ -226,7 +219,7 @@ export default function Favourites() {
     if (loading) {
         return (
             <div data-ref="dashboard-container" className="pt-20">
-                <LoadIcon iconColor ={propsColor}/>
+                <LoadIcon iconColor={propsColor} />
             </div>
         );
     }
