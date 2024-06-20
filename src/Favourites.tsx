@@ -172,20 +172,58 @@ export default function Favourites() {
     }
 
     function handleSort(event: React.MouseEvent<HTMLButtonElement>) {
-        const filterChosen = event.currentTarget.value
+        const filterChosen = event.currentTarget.innerText
+        if(event.currentTarget.classList.contains('underline')){
+            event.currentTarget.classList.remove('underline')
+        }
         if(filterChosen) {
             switch(filterChosen) {
                 case 'A-Z': {
-                    setDisplayItems(displayItems.sort())
+                    const sortedItems = [...displayItems].sort((a, b) => {
+                        const showA = a.showId.toLowerCase();
+                        const showB = b.showId.toLowerCase();
+                        if (showA < showB) return -1;
+                        if (showA > showB) return 1;
+                        return 0;
+                    });
+                    setDisplayItems(sortedItems);
+                    event.currentTarget.classList.add('underline')
                     break
                 }
                 case 'Z-A': {
+                    const sortedItems = [...displayItems].sort((a, b) => {
+                        const showA = a.showId.toLowerCase();
+                        const showB = b.showId.toLowerCase();
+                        if (showA < showB) return 1;
+                        if (showA > showB) return -1;
+                        return 0;
+                    });
+                    setDisplayItems(sortedItems);
+                    event.currentTarget.classList.add('underline')
                     break
                 }
                 case 'Newest': {
+                    const sortedItems = [...displayItems].sort((a, b) => {
+                        const showA = a.showId.toLowerCase();
+                        const showB = b.showId.toLowerCase();
+                        if (showA < showB) return -1;
+                        if (showA > showB) return 1;
+                        return 0;
+                    });
+                    setDisplayItems(sortedItems);
+                    event.currentTarget.classList.add('underline')
                     break
                 }
                 case 'Oldest': {
+                    const sortedItems = [...displayItems].sort((a, b) => {
+                        const showA = a.showId.toLowerCase();
+                        const showB = b.showId.toLowerCase();
+                        if (showA < showB) return -1;
+                        if (showA > showB) return 1;
+                        return 0;
+                    });
+                    setDisplayItems(sortedItems);
+                    event.currentTarget.classList.add('underline')
                     break
                 }
             }
