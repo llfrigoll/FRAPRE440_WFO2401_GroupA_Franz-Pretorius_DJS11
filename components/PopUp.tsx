@@ -318,7 +318,6 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
                     {'< Back'}
                 </button>
                 <div className="flex flex-col col-span-2 bg-slate-800 rounded-lg w-full">
-                    {loading && <LoadIcon iconColor={propsColor} />}
                     <div className="absolute top-10 left-2 right-96 mr-12 h-48 rounded-xl bg-slate-800"></div>
                     {!loading && (
                         <div className="col-span-2 w-full pl-6 pt-12 p-2">
@@ -344,7 +343,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
                         </div>
                     )}
                     <div className="col-span-2 pl-6 pt-44 pr-8 h-96">
-                        <div className="overflow-y-auto h-full">
+                        <div className="overflow-y-auto h-full mt-9">
                             {!activeEpisode && (
                                 <p className="h-48 mt-4 pr-4 text-sm text-slate-300">
                                     {description}
