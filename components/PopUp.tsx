@@ -213,6 +213,17 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         }
     }
 
+    const handleEnded = () => {
+        if (activeEpisode) {
+            const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}_ended`
+            if (audioRef.current) {
+                const currentTime = audioRef.current.currentTime
+                localStorage.setItem(uniqueKey, currentTime.toString())
+            }
+        }
+        forceUpdate()
+    }
+
     const handleEpisodeClick = (newEpisode: Episode) => {
         if (audioRef.current) {
             audioRef.current.pause()
@@ -235,12 +246,6 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         }
     })
 
-    if (audioRef.current) {
-        if (audioRef.current.duration === audioRef.current.currentTime) {
-            console.log('ended')
-        }
-    }
-
     const handleBackClick = () => {
         if (activeEpisode && selectedSeason) {
             setActiveEpisode(null)
@@ -248,6 +253,12 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
             setSelectedSeason(-1)
         }
     }
+
+    useEffect(() => {
+        if (selectedSeason === -1) {
+            setActiveEpisode(null)
+        }
+    }, [selectedSeason])
 
     const customStyles: StylesConfig<OptionType, false> = {
         control: provided => ({
@@ -313,7 +324,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
                     onClick={handleBackClick}
                     className={
                         'fixed pl-4 pt-2 font-medium text-slate-300 z-10 ' +
-                        (selectedSeason === -1 ? 'hidden' : 'visible')
+                        (selectedSeason !== -1 ? 'visible' : 'hidden')
                     }>
                     {'< Back'}
                 </button>
@@ -349,7 +360,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
                                     {description}
                                 </p>
                             )}
-                            {activeEpisode && (
+                            {activeEpisode && selectedSeason !== -1 && (
                                 <div className="w-full flex flex-col h-fit">
                                     <div className="flex flex-row">
                                         <button
@@ -369,7 +380,16 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
                                         </button>
                                         <h1 className="text-slate-300 text-2xl mt-1 mb-2 w-11/12 pl-1">
                                             {activeEpisode.episode}.{' '}
-                                            {activeEpisode.title}
+                                            {activeEpisode.title}{' '}
+                                            {localStorage.getItem(
+                                                `${showId}_${selectedSeason}_${activeEpisode.episode}_ended`
+                                            ) ? (
+                                                <span className="text-red-600">
+                                                    - Watched
+                                                </span>
+                                            ) : (
+                                                <></>
+                                            )}
                                         </h1>
                                     </div>
                                     <p className="w-11/12 ml-4 text-slate-300 text-sm font-light pr-4 mb-4">
@@ -382,7 +402,8 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
                                         data-ref="audio-player"
                                         className="w-11/12 ml-4"
                                         onPlay={handlePlay}
-                                        onPause={handlePause}>
+                                        onPause={handlePause}
+                                        onEnded={handleEnded}>
                                         <source
                                             src={activeEpisode.file}
                                             type="audio/mp3"
