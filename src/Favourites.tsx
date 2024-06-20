@@ -217,6 +217,10 @@ export default function Favourites() {
         }
     }
 
+    function handleRemoveAll() {
+        
+    }
+
     const propsColor = 'border-slate-800'
     if (loading) {
         return (
@@ -227,7 +231,7 @@ export default function Favourites() {
     }
 
     return (
-        <div data-ref="favourites-container" className="pt-20 bg-slate-300 min-h-screen">
+        <div data-ref="favourites-container" className="pt-20 bg-slate-300">
             <div className="flex flex-row pb-6">
                 <h1 className="text-slate-600 font-semibold text-4xl ml-20 pt-10 mt-auto mb-auto">Favourites</h1>
                 <span className="text-slate-800 ml-auto mr-40 pt-10 mt-auto mb-auto font-medium">
@@ -240,6 +244,9 @@ export default function Favourites() {
             {renderedShows.length === 0 ? <p className="text-center font-medium">No favourites</p>: <></>}
             <div className="grid grid-cols-2 gap-x-10 mt-10 mx-14 text-slate-800">
                 {renderedShows}
+            </div>
+            <div className="flex justify-end mr-14 pb-10">
+                <button onClick={handleRemoveAll} className="text-red-600 font-semibold rounded-lg border-2 border-red-600 border-soid hover:text-light hover:text-red-800 hover:border-red-800">Clear All Favourites</button>
             </div>
         </div>
     );
