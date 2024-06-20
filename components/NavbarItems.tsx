@@ -53,7 +53,7 @@ const NavbarItems: React.FC<NavItemsProps> = ({
             )
         ) {
             Object.keys(localStorage).forEach(function (key) {
-                if (key.endsWith('_audio')) {
+                if (key.endsWith('_audio') || key.endsWith('_ended')) {
                     localStorage.removeItem(key)
                 }
             })

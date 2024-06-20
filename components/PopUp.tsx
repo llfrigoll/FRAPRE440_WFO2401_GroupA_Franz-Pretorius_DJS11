@@ -213,6 +213,13 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         }
     }
 
+    const handleSeeked = () => {
+        if (activeEpisode) {
+            const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`
+            saveCurrentTime(uniqueKey)
+        }
+    }
+
     const handleEnded = () => {
         if (activeEpisode) {
             const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}_ended`
@@ -329,32 +336,33 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
                     {'< Back'}
                 </button>
                 <div className="flex flex-col col-span-2 bg-slate-800 rounded-lg w-full">
-                    <div className="absolute top-10 left-2 right-96 mr-12 h-48 rounded-xl bg-slate-800"></div>
-                    {!loading && (
-                        <div className="col-span-2 w-full pl-6 pt-12 p-2">
-                            <img
-                                src={popUpImage}
-                                className="fixed rounded-md h-1/4 col-span-1 z-10"
-                                alt={popUpTitle}
-                            />
-                            <div className="fixed flex flex-col col-span-1 w-1/3 ml-44">
-                                <h1 className="pl-4 mb-2 text-slate-300 font-semibold text-4xl text-wrap">
-                                    {popUpTitle}
-                                </h1>
-                                <p className="pl-4 mb-1 text-slate-300 text-wrap">
-                                    {genreString}
-                                </p>
-                                <p className="pl-4 mb-1 text-slate-300 text-wrap">
-                                    {updatedString}
-                                </p>
-                                <p className="pl-4 mb-1 text-slate-300 text-wrap">
-                                    {seasonString}
-                                </p>
+                    <div className="absolute top-10 left-2 right-96 mr-12 h-48 rounded-xl bg-slate-800">
+                        {!loading && (
+                            <div className="col-span-2 w-full pl-6 pt-12 p-2">
+                                <img
+                                    src={popUpImage}
+                                    className="fixed rounded-md h-1/4 col-span-1 z-10"
+                                    alt={popUpTitle}
+                                />
+                                <div className="fixed flex flex-col col-span-1 w-1/3 ml-44">
+                                    <h1 className="pl-4 mb-2 text-slate-300 font-semibold text-4xl text-wrap">
+                                        {popUpTitle}
+                                    </h1>
+                                    <p className="pl-4 mb-1 text-slate-300 text-wrap">
+                                        {genreString}
+                                    </p>
+                                    <p className="pl-4 mb-1 text-slate-300 text-wrap">
+                                        {updatedString}
+                                    </p>
+                                    <p className="pl-4 mb-1 text-slate-300 text-wrap">
+                                        {seasonString}
+                                    </p>
+                                </div>
                             </div>
-                        </div>
-                    )}
+                        )}
+                    </div>
                     <div className="col-span-2 pl-6 pt-44 pr-8 h-96">
-                        <div className="overflow-y-auto h-full mt-9">
+                        <div className="overflow-y-auto h-full mt-14">
                             {!activeEpisode && (
                                 <p className="h-48 mt-4 pr-4 text-sm text-slate-300">
                                     {description}
@@ -385,7 +393,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
                                                 `${showId}_${selectedSeason}_${activeEpisode.episode}_ended`
                                             ) ? (
                                                 <span className="text-red-600">
-                                                    - Watched
+                                                    - Listened
                                                 </span>
                                             ) : (
                                                 <></>
@@ -403,7 +411,8 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
                                         className="w-11/12 ml-4"
                                         onPlay={handlePlay}
                                         onPause={handlePause}
-                                        onEnded={handleEnded}>
+                                        onEnded={handleEnded}
+                                        onSeeked={handleSeeked}>
                                         <source
                                             src={activeEpisode.file}
                                             type="audio/mp3"
