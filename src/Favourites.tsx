@@ -6,7 +6,7 @@ interface FavObject {
     showId: string;
     seasonNum: number;
     episodeNum: number;
-    dateAdded: string; // Using string instead of Date for localStorage compatibility
+    dateAdded: Date; // Using string instead of Date for localStorage compatibility
 }
 
 interface DisplayShow {
@@ -31,7 +31,8 @@ export default function Favourites() {
     const [displayItems, setDisplayItems] = useState<DisplayShow[]>([]);
     const [renderedShows, setRenderedShows] = useState<JSX.Element[]>([]);
     const [loading, setLoading] = useState(false);
-    const [isRemoveClicked, setIsRemovedClicked] = useState(false)
+    const [isRemoveClicked, setIsRemovedClicked] = useState(false);
+    const [selectedFilter, setSelectedFilter] = useState<string>("");
 
     const months = [
         "January", "February", "March", "April", "May", "June",
@@ -74,7 +75,7 @@ export default function Favourites() {
                     let show = items.find(item => item.showId === episode.showId);
                     if (!show) {
                         const showData = await getShow(episode.showId);
-                        show = { showId: episode.showId, seasons: [], updated: showData.updated };
+                        show = { showId: episode.showId, seasons: [], updated: showData.updated.toString() };
                         items.push(show);
                     }
 
@@ -86,7 +87,7 @@ export default function Favourites() {
 
                     const displayEpisode: DisplayEpisode = {
                         episodeNum: episode.episodeNum,
-                        dateAdded: episode.dateAdded,
+                        dateAdded: episode.dateAdded.toString(),
                     };
 
                     season.episodes.push(displayEpisode);
@@ -120,7 +121,7 @@ export default function Favourites() {
                 for (const episode of season.episodes) {
                     const episodeData = await getEpisode(seasonData, episode.episodeNum);
                     const episodeAdded = new Date(episode.dateAdded);
-                    const episodeTitle = `${episode.episodeNum}. ${episodeData.title} - Added: ${episodeAdded.getHours()}:${episodeAdded.getMinutes()}, ${episodeAdded.getDate()} ${months[episodeAdded.getMonth()]} ${episodeAdded.getFullYear()}`;
+                    const episodeTitle = `${episode.episodeNum}. ${episodeData.title} - Added: ${episodeAdded.getHours().toString().padStart(2, '0')}:${episodeAdded.getMinutes()}, ${episodeAdded.getDate()} ${months[episodeAdded.getMonth()]} ${episodeAdded.getFullYear()}`;
                     
                     episodeElements.push(
                         <li id={`${show.showId}_${season.seasonNum}_${episode.episodeNum}`} key={`${show.showId}-${season.seasonNum}-${episode.episodeNum}`} className="font-light">
@@ -172,11 +173,10 @@ export default function Favourites() {
     }
 
     function handleSort(event: React.MouseEvent<HTMLButtonElement>) {
-        const filterChosen = event.currentTarget.innerText
-        if(event.currentTarget.classList.contains('underline')){
-            event.currentTarget.classList.remove('underline')
-        }
-        if(filterChosen) {
+        const filterChosen = event.currentTarget.innerText;
+        setSelectedFilter(filterChosen); // Update the selected filter
+
+        if (filterChosen) {
             switch(filterChosen) {
                 case 'A-Z': {
                     const sortedItems = [...displayItems].sort((a, b) => {
@@ -187,8 +187,7 @@ export default function Favourites() {
                         return 0;
                     });
                     setDisplayItems(sortedItems);
-                    event.currentTarget.classList.add('underline')
-                    break
+                    break;
                 }
                 case 'Z-A': {
                     const sortedItems = [...displayItems].sort((a, b) => {
@@ -199,8 +198,7 @@ export default function Favourites() {
                         return 0;
                     });
                     setDisplayItems(sortedItems);
-                    event.currentTarget.classList.add('underline')
-                    break
+                    break;
                 }
                 case 'Newest': {
                     const sortedItems = [...displayItems].sort((a, b) => {
@@ -209,8 +207,7 @@ export default function Favourites() {
                         return dateB.getTime() - dateA.getTime();
                     });
                     setDisplayItems(sortedItems);
-                    event.currentTarget.classList.add('underline')
-                    break
+                    break;
                 }
                 case 'Oldest': {
                     const sortedItems = [...displayItems].sort((a, b) => {
@@ -219,8 +216,7 @@ export default function Favourites() {
                         return dateA.getTime() - dateB.getTime();
                     });
                     setDisplayItems(sortedItems);
-                    event.currentTarget.classList.add('underline')
-                    break
+                    break;
                 }
             }
         }
@@ -240,10 +236,10 @@ export default function Favourites() {
             <div className="flex flex-row pb-8">
                 <h1 className="text-slate-600 font-semibold text-4xl ml-20 pt-10 mt-auto mb-auto">Favourites</h1>
                 <span className="text-slate-800 ml-auto mr-40 pt-10 mt-auto mb-auto font-medium">
-                    <button onClick={handleSort} className="hover:text-light hover:text-slate-400">A-Z</button>
-                    <button onClick={handleSort} className="hover:text-light hover:text-slate-400 ml-10">Z-A</button>
-                    <button onClick={handleSort} className="hover:text-light hover:text-slate-400 ml-10">Newest</button>
-                    <button onClick={handleSort} className="hover:text-light hover:text-slate-400 ml-10">Oldest</button>
+                    <button onClick={handleSort} className={`hover:text-light hover:text-slate-400 ${selectedFilter === 'A-Z' ? 'underline' : ''}`}>A-Z</button>
+                    <button onClick={handleSort} className={`hover:text-light hover:text-slate-400 ml-10 ${selectedFilter === 'Z-A' ? 'underline' : ''}`}>Z-A</button>
+                    <button onClick={handleSort} className={`hover:text-light hover:text-slate-400 ml-10 ${selectedFilter === 'Newest' ? 'underline' : ''}`}>Newest</button>
+                    <button onClick={handleSort} className={`hover:text-light hover:text-slate-400 ml-10 ${selectedFilter === 'Oldest' ? 'underline' : ''}`}>Oldest</button>
                 </span>
             </div>
             {renderedShows.length === 0 ? <p className="text-center font-medium">No favourites</p>: <></>}
