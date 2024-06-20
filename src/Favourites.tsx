@@ -42,6 +42,7 @@ export default function Favourites() {
 
     useEffect(() => {
         async function loadLocalStorage() {
+            setSelectedFilter('')
             const localEpisodes: (string | null)[] = [];
             Object.keys(localStorage).forEach((key) => {
                 if (!key.endsWith('_audio')) {
@@ -111,6 +112,7 @@ export default function Favourites() {
             const lastUpdatedDate = new Date(show.updated);
             const lastUpdatedString = `${lastUpdatedDate.getDate()} ${months[lastUpdatedDate.getMonth()]} ${lastUpdatedDate.getFullYear()}`;
 
+            show.seasons.sort((a, b) => a.seasonNum - b.seasonNum)
             const seasonElements: JSX.Element[] = [];
             for (const season of show.seasons) {
                 const seasonData = await getSeason(show.showId, season.seasonNum);
@@ -144,6 +146,7 @@ export default function Favourites() {
 
             elements.push(
                 <div key={show.showId} data-ref="show-container" className="mb-12">
+                    <hr className="mb-2 ml-1 pb-10 w-11/12 border-slate-800" />
                     <div className="flex flex-row">
                         <img className="h-44 w-44 mb-4 self-center rounded-lg" src={showImage} alt={`${showTitle} image`} />
                         <div className="flex flex-col pl-4 pt-2">
@@ -152,7 +155,6 @@ export default function Favourites() {
                             <p>Last Updated: {lastUpdatedString}</p>
                         </div>
                     </div>
-                    <hr className="mb-2 ml-1 w-11/12 border-slate-800" />
                     {seasonElements}
                 </div>
             );
@@ -226,7 +228,7 @@ export default function Favourites() {
 
     return (
         <div data-ref="favourites-container" className="pt-20 bg-slate-300 min-h-screen">
-            <div className="flex flex-row pb-8">
+            <div className="flex flex-row pb-6">
                 <h1 className="text-slate-600 font-semibold text-4xl ml-20 pt-10 mt-auto mb-auto">Favourites</h1>
                 <span className="text-slate-800 ml-auto mr-40 pt-10 mt-auto mb-auto font-medium">
                     <button onClick={handleSort} className={`hover:text-light hover:text-slate-400 ${selectedFilter === 'A-Z' ? 'underline' : ''}`}>A-Z</button>
