@@ -1,21 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react'
 
 interface SearchBarProps {
-    onSearchTextChange: (text: string) => void;
-    hidepopup: () => void;
+    onSearchTextChange: (text: string) => void
+    hidepopup: () => void
     handleNav: (value: boolean) => void
 }
 
-export default function SearchBar({ onSearchTextChange, hidepopup, handleNav }: SearchBarProps) {
-    const [text, setText] = useState('');
+export default function SearchBar({
+    onSearchTextChange,
+    hidepopup,
+    handleNav,
+}: SearchBarProps) {
+    const [text, setText] = useState('')
 
     useEffect(() => {
-        onSearchTextChange(text);
-    }, [text, onSearchTextChange]);
+        onSearchTextChange(text)
+    }, [text, onSearchTextChange])
 
     const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setText(event.target.value);
-    };
+        setText(event.target.value)
+    }
 
     const focusHandler = () => {
         hidepopup()
@@ -37,7 +41,11 @@ export default function SearchBar({ onSearchTextChange, hidepopup, handleNav }: 
                 placeholder="Search"
                 className="absolute p-2 pr-10 right-0 bg-slate-600 placeholder-slate-300 rounded-2xl text-slate-300 focus:outline focus:outline-2 focus:outline-slate-300"
             />
-            <button onClick={closeClickHandler} className="font-medium relative mt-2 mr-4 text-slate-300">x</button>
+            <button
+                onClick={closeClickHandler}
+                className="font-medium relative mt-2 mr-4 text-slate-300">
+                x
+            </button>
         </div>
-    );
+    )
 }
