@@ -7,11 +7,7 @@ interface PodcastTileProps {
   onTileClick: (show: Preview) => void;
 }
 
-export default function PodcastTile({
-  propsPreview,
-  propsGenres,
-  onTileClick
-}: PodcastTileProps) {
+export default function PodcastTile({propsPreview, propsGenres, onTileClick}: PodcastTileProps) {
   const months = [
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"

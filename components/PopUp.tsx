@@ -223,8 +223,11 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
   }
 
   const handleBackClick = () => {
-    setActiveEpisode(null);
-    setSelectedSeason(-1);
+    if(activeEpisode && selectedSeason) {
+      setActiveEpisode(null);
+    }else {
+      setSelectedSeason(-1);
+    }
   };
 
   const customStyles: StylesConfig<OptionType, false> = {
