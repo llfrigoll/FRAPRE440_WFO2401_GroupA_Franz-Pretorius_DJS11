@@ -33,6 +33,7 @@ export default function Favourites() {
     const [renderedShows, setRenderedShows] = useState<JSX.Element[]>([]);
     const [loading, setLoading] = useState(false);
     const [isRemoveClicked, setIsRemovedClicked] = useState(false);
+    const [isRemoveAllClicked, setIsRemovedAllClicked] = useState(false);
     const [selectedFilter, setSelectedFilter] = useState<string>("");
 
     const months = [
@@ -52,7 +53,7 @@ export default function Favourites() {
             setFavEpisodeStrings([...localEpisodes]);
         }
         loadLocalStorage();
-    }, [isRemoveClicked]);
+    }, [isRemoveClicked, isRemoveAllClicked]);
 
     useEffect(() => {
         async function loadEpisodes() {
@@ -218,7 +219,14 @@ export default function Favourites() {
     }
 
     function handleRemoveAll() {
-        
+        if(confirm('Are you sure you want to clear all favourites?')) {
+            Object.keys(localStorage).forEach((key) => {
+                if (!key.endsWith('_audio')) {
+                    localStorage.removeItem(key)
+                }
+            });
+            setIsRemovedAllClicked(!isRemoveAllClicked)
+        }
     }
 
     const propsColor = 'border-slate-800'
@@ -231,7 +239,7 @@ export default function Favourites() {
     }
 
     return (
-        <div data-ref="favourites-container" className="pt-20 bg-slate-300">
+        <div data-ref="favourites-container" className="min-h-screen pt-20 bg-slate-300">
             <div className="flex flex-row pb-6">
                 <h1 className="text-slate-600 font-semibold text-4xl ml-20 pt-10 mt-auto mb-auto">Favourites</h1>
                 <span className="text-slate-800 ml-auto mr-40 pt-10 mt-auto mb-auto font-medium">
@@ -245,8 +253,8 @@ export default function Favourites() {
             <div className="grid grid-cols-2 gap-x-10 mt-10 mx-14 text-slate-800">
                 {renderedShows}
             </div>
-            <div className="flex justify-end mr-14 pb-10">
-                <button onClick={handleRemoveAll} className="text-red-600 font-semibold rounded-lg border-2 border-red-600 border-soid hover:text-light hover:text-red-800 hover:border-red-800">Clear All Favourites</button>
+            <div className="flex justify-end mr-24 pb-10">
+                <button onClick={handleRemoveAll} className="p-1 text-red-600 font-semibold rounded-md border-2 border-red-600 border-soid hover:text-light hover:text-red-800 hover:border-red-800">Clear All Favourites</button>
             </div>
         </div>
     );
