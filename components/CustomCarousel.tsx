@@ -3,8 +3,17 @@ import { Carousel } from "react-bootstrap";
 import poddLogo from '../images/Podd_Logo.png';
 import { getAllPreviews } from '../utils/Api';
 
+interface Info {
+    title: string,
+    seasons: string,
+    genres: string,
+    updated: string,
+    image: string
+}
+
 export default function CustomCarousel() {
-const [images, setImages] = useState<string[]>([])
+const [info, setInfo] = useState<Info[]>([])
+
 
 function randomNums(totalItems: number) {
     const nums = []
@@ -14,33 +23,52 @@ function randomNums(totalItems: number) {
 }
 
 useEffect(() => {
-    async function getImages() {
+    async function getInfo() {
         const previews = await getAllPreviews()
         const randomNumbers = randomNums(previews.length)
-        const imageStrings = randomNumbers.map(randomNumber => previews[randomNumber].image)
-        setImages(imageStrings)
+
+        const localInfo: Info[] = [] 
+        randomNumbers.map(randomNumber => {
+            const title = previews[randomNumber].title
+            const image = previews[randomNumber].image
+            const seasons = previews[randomNumber].seasons.toString()
+            const updated = previews[randomNumber].updated.toString()
+            const genres = previews[randomNumber].genres[0].toString()
+
+            const singleInfo: Info = {
+                title: title,
+                image: image,
+                seasons: seasons,
+                updated: updated,
+                genres: genres
+            }
+            localInfo.push(singleInfo)
+
+        })
+        setInfo([...localInfo])
+        console.log(localInfo)
     }
-    getImages()
+    getInfo()
 },[])
 
 
   return (
     <div className='flex'>
-      <Carousel className='w-1/4 h-1/4 overflow-hidden ml-auto mr-auto mt-10'>
-            <Carousel.Item interval={5000} >
-            <img src={images[0]} alt="First slide" className='rounded-lg'/>
+      <Carousel className='w-3/4 h-96 ml-auto mr-auto mt-10'>
+            <Carousel.Item interval={5000}>
+            <img src={} alt="First slide" className='rounded-lg w-1/3 flex flex-row'/>
             </Carousel.Item>
             <Carousel.Item interval={5000} >
-            <img src={images[1]} alt="Second slide" className='rounded-lg'/>
+            <img src={} alt="Second slide" className='rounded-lg w-1/3 flex flex-row'/>
             </Carousel.Item>
             <Carousel.Item interval={5000} >
-            <img src={images[2]} alt="Third slide" className='rounded-lg'/>
+            <img src={} alt="Third slide" className='rounded-lg w-1/3 flex flex-row'/>
             </Carousel.Item>
             <Carousel.Item interval={5000} >
-            <img src={images[3]} alt="Fourth slide" className='rounded-lg'/>
+            <img src={} alt="Fourth slide" className='rounded-lg w-1/3 flex flex-row'/>
             </Carousel.Item>
             <Carousel.Item interval={5000} >
-            <img src={images[4]} alt="Fifth slide" className='rounded-lg'/>
+            <img src={} alt="Fifth slide" className='rounded-lg w-1/3 flex flex-row'/>
             </Carousel.Item>
         </Carousel>
         </div>
