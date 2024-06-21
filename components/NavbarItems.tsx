@@ -10,8 +10,10 @@ const NavbarItems: React.FC<NavItemsProps> = ({
     handleDashClick,
     handleFavClick,
 }) => {
+    //Items displayed in navbar
     const items = ['Dashboard', 'Favourites', 'Clear Listen History']
 
+    //Sets the animation of the children flowing up to their positions and back down
     const navList = {
         visible: {
             opacity: 1,
@@ -29,6 +31,7 @@ const NavbarItems: React.FC<NavItemsProps> = ({
         },
     }
 
+    //Sets the visibility of incoming items
     const navItem = {
         visible: {
             y: 0,
@@ -46,6 +49,7 @@ const NavbarItems: React.FC<NavItemsProps> = ({
         },
     }
 
+    //If confirmed will reset and episodes timestamp and if its been fully listened through
     const handleClearClick = () => {
         if (
             confirm(
@@ -60,6 +64,7 @@ const NavbarItems: React.FC<NavItemsProps> = ({
         }
     }
 
+    //Handles which navitem has been clicked and applies functions accordingly
     const itemClickHandler = (
         event: React.MouseEvent<HTMLParagraphElement>
     ) => {

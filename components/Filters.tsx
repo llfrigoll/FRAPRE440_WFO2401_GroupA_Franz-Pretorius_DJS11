@@ -19,6 +19,7 @@ export default function Filters({ onGenreChange, onSortChange }: FiltersProps) {
     const [loading, setLoading] = useState(false)
     const [selectedSort, setSelectedSort] = useState<string | null>(null)
 
+    //Sets default sort to A-Z and load genres into dropdown
     useEffect(() => {
         async function loadGenres() {
             setLoading(true)
@@ -34,6 +35,7 @@ export default function Filters({ onGenreChange, onSortChange }: FiltersProps) {
         loadGenres()
     }, [])
 
+    //Styling for dropdown
     const customStyles: StylesConfig<OptionType, false> = {
         control: provided => ({
             ...provided,
@@ -53,10 +55,12 @@ export default function Filters({ onGenreChange, onSortChange }: FiltersProps) {
         }),
     }
 
+    //Sets selected genre to chosen option
     const handleGenreChange = (selectedOption: SingleValue<OptionType>) => {
         onGenreChange(selectedOption ? selectedOption.value : null)
     }
 
+    //Sets sort to chosen label
     const handleSortChange = (
         sortLabel: string,
         sortFunc: (a: Preview, b: Preview) => number
@@ -65,6 +69,7 @@ export default function Filters({ onGenreChange, onSortChange }: FiltersProps) {
         onSortChange(sortFunc)
     }
 
+    //Loading state
     const propsColor = 'border-slate-800'
     if (loading) {
         return (
@@ -74,6 +79,7 @@ export default function Filters({ onGenreChange, onSortChange }: FiltersProps) {
         )
     }
 
+    //Buttons set the sorting functions
     return (
         <div
             data-ref="filters-container"

@@ -32,6 +32,7 @@ export default function CustomCarousel() {
         'December',
     ]
 
+    //Generates 5 random numbers for given total
     function randomNums(totalItems: number) {
         const nums = []
         for (let i = 0; i < 5; i++)
@@ -39,6 +40,7 @@ export default function CustomCarousel() {
         return nums
     }
 
+    //Fetches previews for 5 random shows
     useEffect(() => {
         async function getInfo() {
             setLoading(true)
@@ -77,6 +79,7 @@ export default function CustomCarousel() {
         getInfo()
     }, [])
 
+    //Loading state
     const propsColor = 'border-slate-800'
     if (loading) {
         return (

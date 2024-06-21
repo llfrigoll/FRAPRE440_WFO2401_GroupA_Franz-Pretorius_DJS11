@@ -52,6 +52,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         'December',
     ]
 
+    //Sets the subtle fading in and out of popup
     const popUpContainer = {
         visible: {
             opacity: 1,
@@ -69,6 +70,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         },
     }
 
+    //Loads specific show using id
     useEffect(() => {
         async function loadShow() {
             setLoading(true)
@@ -79,6 +81,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         loadShow()
     }, [showId])
 
+    //Extracts info of each show
     useEffect(() => {
         async function loadInfo() {
             if (podcast) {
@@ -108,6 +111,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         loadInfo()
     }, [podcast])
 
+    //Loads all seasons as a selectable option and showing how many episodes they have
     useEffect(() => {
         async function loadOptions() {
             const options = seasons.map(season => ({
@@ -123,6 +127,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         loadOptions()
     }, [seasons])
 
+    //Loads episodes according to chosen season
     useEffect(() => {
         async function loadEpisodes() {
             let localEpisodes: Episode[] = []
@@ -150,6 +155,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         loadEpisodes()
     }, [selectedSeason])
 
+    //Adds episode to localstorage and updates UI
     const favouritesBtnClick = () => {
         if (!activeEpisode) return
 
@@ -169,9 +175,10 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
             localStorage.setItem(uniqueKey, JSON.stringify(favObject))
         }
 
-        forceUpdate() // Forces the component to re-render
+        forceUpdate()
     }
 
+    //Saves currenttime of audio
     const saveCurrentTime = (uniqueKey: string) => {
         if (audioRef.current) {
             const currentTime = audioRef.current.currentTime
@@ -179,6 +186,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         }
     }
 
+    //Loads stored currenttime of audio
     const loadCurrentTime = (uniqueKey: string) => {
         const storedTime = localStorage.getItem(`${uniqueKey}_audio`)
         if (storedTime && audioRef.current) {
@@ -192,6 +200,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         }
     }
 
+    //If an episode is active it will load its currenttime
     useEffect(() => {
         if (activeEpisode) {
             const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`
@@ -199,6 +208,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         }
     }, [activeEpisode])
 
+    //Saves time when played
     const handlePlay = () => {
         if (activeEpisode) {
             const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`
@@ -206,6 +216,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         }
     }
 
+    //Saves time when paused
     const handlePause = () => {
         if (activeEpisode) {
             const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`
@@ -213,6 +224,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         }
     }
 
+    //Saves time when seeked
     const handleSeeked = () => {
         if (activeEpisode) {
             const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}`
@@ -220,6 +232,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         }
     }
 
+    //Adds to localstorage if episode has reached the end
     const handleEnded = () => {
         if (activeEpisode) {
             const uniqueKey = `${showId}_${selectedSeason}_${activeEpisode.episode}_ended`
@@ -231,6 +244,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         forceUpdate()
     }
 
+    //Loads new episode, saves previous episode and pauses audio
     const handleEpisodeClick = (newEpisode: Episode) => {
         if (audioRef.current) {
             audioRef.current.pause()
@@ -242,6 +256,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         setActiveEpisode(newEpisode)
     }
 
+    //Confirm close message for tab if audio is playing
     window.addEventListener('beforeunload', (event: BeforeUnloadEvent) => {
         if (audioRef.current) {
             if (audioRef.current.duration > 0 && !audioRef.current.paused) {
@@ -253,6 +268,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         }
     })
 
+    //Goes back from episode to season or from season to default view
     const handleBackClick = () => {
         if (activeEpisode && selectedSeason) {
             setActiveEpisode(null)
@@ -261,12 +277,14 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         }
     }
 
+    //Sets active episode to null if season is inactive
     useEffect(() => {
         if (selectedSeason === -1) {
             setActiveEpisode(null)
         }
     }, [selectedSeason])
 
+    //Styles for dropdown
     const customStyles: StylesConfig<OptionType, false> = {
         control: provided => ({
             ...provided,
@@ -286,6 +304,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         }),
     }
 
+    //Clickable episodes
     let episodeButtons = <></>
     if (validSeason) {
         episodeButtons = (
@@ -312,13 +331,13 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
         )
     }
 
+    //Closes popup
     const closeClickHandler = () => {
         hidepopup()
         closeModal(false)
     }
 
     const propsColor = 'border-slate-400'
-
     return (
         <AnimatePresence>
             <motion.div
@@ -373,6 +392,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
                                     <div className="flex flex-row">
                                         <button
                                             onClick={favouritesBtnClick}
+                                            //Heart changes depending on if its favourited
                                             className={`text-3xl mb-auto h-10 w-8 hover:text-red-500 ${
                                                 localStorage.getItem(
                                                     `${showId}_${selectedSeason}_${activeEpisode.episode}`
@@ -386,7 +406,8 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
                                                 ? '❤️'
                                                 : '♡'}
                                         </button>
-                                        <h1 className="text-slate-300 text-2xl mt-1 mb-2 w-11/12 pl-1">
+                                        <h1 //Adds word 'listened' if it has been played to the end a previous time
+                                            className="text-slate-300 text-2xl mt-1 mb-2 w-11/12 pl-1">
                                             {activeEpisode.episode}.{' '}
                                             {activeEpisode.title}{' '}
                                             {localStorage.getItem(

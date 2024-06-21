@@ -38,6 +38,7 @@ export default function PodcastTile({
         months[updatedDate.getMonth()]
     } ${updatedDate.getFullYear()}`
 
+    //Uses genre ids to find genrenames and add them as one string
     const genreNames = genres
         .map(
             genreId =>
@@ -46,6 +47,7 @@ export default function PodcastTile({
         .filter(Boolean)
     const genreString = genreNames.join(', ')
 
+    //Handles click of a tile
     const clickHandler = () => {
         onTileClick(propsPreview)
     }

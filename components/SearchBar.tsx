@@ -13,20 +13,24 @@ export default function SearchBar({
 }: SearchBarProps) {
     const [text, setText] = useState('')
 
+    //Sets searched text to text entered as its entered
     useEffect(() => {
         onSearchTextChange(text)
     }, [text, onSearchTextChange])
 
+    //Handles change
     const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setText(event.target.value)
     }
 
+    //When searchbar is active the modal, navbar and popup closes
     const focusHandler = () => {
         hidepopup()
         handleNav(false)
     }
 
-    const closeClickHandler = () => {
+    //Clears searchtext
+    const clearHandler = () => {
         setText('')
     }
 
@@ -42,7 +46,7 @@ export default function SearchBar({
                 className="absolute p-2 pr-10 right-0 bg-slate-600 placeholder-slate-300 rounded-2xl text-slate-300 focus:outline focus:outline-2 focus:outline-slate-300"
             />
             <button
-                onClick={closeClickHandler}
+                onClick={clearHandler}
                 className="font-medium relative mt-2 mr-4 text-slate-300">
                 x
             </button>

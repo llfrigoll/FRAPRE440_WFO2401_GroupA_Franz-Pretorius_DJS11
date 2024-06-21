@@ -17,11 +17,13 @@ const Navbar: React.FC<NavbarProps> = ({
     handleDashboardSelected,
     handleFavouritesSelected,
 }) => {
+    //Toggles navbar and hides popup
     const handleToggle = () => {
         handleNav(!isNavActive)
         hidepopup()
     }
 
+    //Sets the opening of the navbar
     const navContainer = {
         visible: {
             opacity: 1,
@@ -39,6 +41,7 @@ const Navbar: React.FC<NavbarProps> = ({
         },
     }
 
+    //Toggles to the Favourites section
     const handleFavClick = () => {
         handleDashboardSelected(false)
         handleFavouritesSelected(true)
@@ -46,6 +49,7 @@ const Navbar: React.FC<NavbarProps> = ({
         hidepopup()
     }
 
+    //Toggles to the Dashboard section
     const handleDashClick = () => {
         handleFavouritesSelected(false)
         handleDashboardSelected(true)
