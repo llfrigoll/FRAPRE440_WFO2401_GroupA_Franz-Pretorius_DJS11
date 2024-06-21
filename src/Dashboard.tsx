@@ -29,6 +29,7 @@ export default function Dashboard({
         (a: Preview, b: Preview) => number
     >(() => () => 0)
 
+    //Loads all previews and genres and stores its data in states
     useEffect(() => {
         async function loadPreviews() {
             setLoading(true)
@@ -47,6 +48,7 @@ export default function Dashboard({
         loadPreviews()
     }, [])
 
+    //Applies filters to the previews, based on search text, genre or selected sort
     const applyFiltersAndSort = useCallback(() => {
         let updatedPreviews = [...previews]
 
@@ -71,10 +73,12 @@ export default function Dashboard({
         setFilteredPreviews(updatedPreviews)
     }, [previews, searchText, selectedGenre, sortFunction, genres])
 
+    //Rerenders when filters apply
     useEffect(() => {
         applyFiltersAndSort()
     }, [applyFiltersAndSort])
 
+    //The follwing handle the different types of sorting
     const handleSearchTextChange = (text: string) => {
         setSearchText(text)
     }
@@ -87,6 +91,7 @@ export default function Dashboard({
         setSortFunction(() => sortFunc)
     }
 
+    //Loading state
     const propsColor = 'border-slate-800'
     if (loading) {
         return (
@@ -100,6 +105,7 @@ export default function Dashboard({
         return <h1>There was an error: {error.message}</h1>
     }
 
+    //Generation of preview tiles
     const previewTiles = filteredPreviews.map(preview => (
         <PodcastTile
             key={preview.id}
@@ -109,6 +115,7 @@ export default function Dashboard({
         />
     ))
 
+    //Component returns searchbar and filters with the custom carousel and tiles
     return (
         <>
             <SearchBar

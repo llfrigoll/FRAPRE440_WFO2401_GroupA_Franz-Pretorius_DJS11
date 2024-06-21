@@ -8,7 +8,7 @@ import { Preview } from '../utils/interfaces'
 import Favourites from './Favourites'
 
 export default function App() {
-    //localStorage.clear()
+    //States used in App
     const [modalActive, setModalActive] = useState(false)
     const [navActive, setNavActive] = useState(false)
     const [popUpActive, setPopUpActive] = useState(false)
@@ -16,22 +16,26 @@ export default function App() {
     const [dashSelected, setDashSelected] = useState(true)
     const [favouritesSelected, setFavouritesSelected] = useState(false)
 
+    // Opens/Closes the Navbar and Modal
     const navHandler = (value: boolean) => {
         setModalActive(value)
         setNavActive(value)
     }
 
+    //Shows show Popup
     const showPopUp = (show: Preview) => {
         setCurrentShow(show)
         setPopUpActive(true)
         setModalActive(true)
     }
 
+    //Hides show popup
     const hidePopUp = () => {
         setPopUpActive(false)
         setCurrentShow(null)
     }
 
+    //Returns component containing Header, Modal, Navbar, Dashboard, Popups and Favourites
     return (
         <div data-ref="app-container" className="relative">
             {modalActive && (

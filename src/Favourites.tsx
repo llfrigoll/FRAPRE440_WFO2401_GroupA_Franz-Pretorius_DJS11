@@ -6,7 +6,7 @@ interface FavObject {
     showId: string
     seasonNum: number
     episodeNum: number
-    dateAdded: Date // Using string instead of Date for localStorage compatibility
+    dateAdded: Date
 }
 
 interface DisplayShow {
@@ -53,11 +53,13 @@ export default function Favourites() {
         'December',
     ]
 
+    //Loads the favourites from localstorage using unique id
     useEffect(() => {
         async function loadLocalStorage() {
             setSelectedFilter('')
             const localEpisodes: (string | null)[] = []
             Object.keys(localStorage).forEach(key => {
+                //if statement filtering out other localstorage items that aren't favourites
                 if (!key.endsWith('_audio') && !key.endsWith('_ended')) {
                     localEpisodes.push(localStorage.getItem(key))
                 }
@@ -67,6 +69,7 @@ export default function Favourites() {
         loadLocalStorage()
     }, [isRemoveClicked, isRemoveAllClicked])
 
+    //Loading the episodes and storing them as FavObjects
     useEffect(() => {
         async function loadEpisodes() {
             const newFavEpisodes: (FavObject | null)[] = favEpisodeStrings.map(
@@ -85,10 +88,12 @@ export default function Favourites() {
         loadEpisodes()
     }, [favEpisodeStrings])
 
+    //Using FavObjects to create objects that are then readable for display
     useEffect(() => {
         async function createDisplayShows() {
             const items: DisplayShow[] = []
 
+            //Uses unique id to get all shows
             for (const episode of favEpisodes) {
                 if (episode) {
                     let show = items.find(
@@ -105,6 +110,7 @@ export default function Favourites() {
                         items.push(show)
                     }
 
+                    //Uses show to get all seasons
                     let season = show.seasons.find(
                         season => season.seasonNum === episode.seasonNum
                     )
@@ -113,6 +119,7 @@ export default function Favourites() {
                         show.seasons.push(season)
                     }
 
+                    //Uses show and season to get episodes
                     const displayEpisode: DisplayEpisode = {
                         episodeNum: episode.episodeNum,
                         dateAdded: episode.dateAdded.toString(),
@@ -126,6 +133,7 @@ export default function Favourites() {
         createDisplayShows()
     }, [favEpisodes])
 
+    //Uses the DisplayShow objects to fetch data from api and display it
     async function fetchAndDisplayShows() {
         setLoading(true)
         const elements: JSX.Element[] = []
@@ -140,6 +148,7 @@ export default function Favourites() {
                 months[lastUpdatedDate.getMonth()]
             } ${lastUpdatedDate.getFullYear()}`
 
+            //Sorts by season number
             show.seasons.sort((a, b) => a.seasonNum - b.seasonNum)
             const seasonElements: JSX.Element[] = []
             for (const season of show.seasons) {
@@ -151,6 +160,7 @@ export default function Favourites() {
 
                 const episodeElements: JSX.Element[] = []
 
+                //Sorts by episode number
                 season.episodes.sort((a, b) => a.episodeNum - b.episodeNum)
                 for (const episode of season.episodes) {
                     const episodeData = await getEpisode(
@@ -225,10 +235,12 @@ export default function Favourites() {
         setLoading(false)
     }
 
+    //Rerenders every time the items array containing displayable items change
     useEffect(() => {
         fetchAndDisplayShows()
     }, [displayItems])
 
+    //Removes the chosen episode
     function handleRemove(event: React.MouseEvent<HTMLButtonElement>) {
         const localStorageItem =
             event.currentTarget.parentElement?.getAttribute('id')
@@ -238,9 +250,10 @@ export default function Favourites() {
         }
     }
 
+    //Checks the chosen sort and applies correct sorting method to the array
     function handleSort(event: React.MouseEvent<HTMLButtonElement>) {
         const filterChosen = event.currentTarget.innerText
-        setSelectedFilter(filterChosen) // Update the selected filter
+        setSelectedFilter(filterChosen)
 
         if (filterChosen) {
             switch (filterChosen) {
@@ -284,6 +297,7 @@ export default function Favourites() {
         }
     }
 
+    //Removes all favourites
     function handleRemoveAll() {
         if (confirm('Are you sure you want to clear all favourites?')) {
             Object.keys(localStorage).forEach(key => {
@@ -295,6 +309,7 @@ export default function Favourites() {
         }
     }
 
+    //Loading state
     const propsColor = 'border-slate-800'
     if (loading) {
         return (
