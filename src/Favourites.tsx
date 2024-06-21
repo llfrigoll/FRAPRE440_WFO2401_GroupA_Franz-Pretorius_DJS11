@@ -188,7 +188,7 @@ export default function Favourites() {
                 seasonElements.push(
                     <div
                         key={`${show.showId}-${season.seasonNum}`}
-                        className="pl-2 w-11/12 ">
+                        className="pl-2 w-11/12">
                         <h3 className="text-lg font-medium">{seasonTitle}</h3>
                         <ul className="pb-2">{episodeElements}</ul>
                     </div>
@@ -201,7 +201,7 @@ export default function Favourites() {
                     data-ref="show-container"
                     className="mb-12">
                     <hr className="mb-2 ml-1 pb-10 w-11/12 border-slate-800" />
-                    <div className="flex flex-row">
+                    <div className="flex flex-row w-11/12 ">
                         <img
                             className="h-44 w-44 mb-4 self-center rounded-lg"
                             src={showImage}

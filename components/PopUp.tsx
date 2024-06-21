@@ -392,7 +392,7 @@ export default function PopUp({ showId, hidepopup, closeModal }: PopUpProps) {
                                             {localStorage.getItem(
                                                 `${showId}_${selectedSeason}_${activeEpisode.episode}_ended`
                                             ) ? (
-                                                <span className="text-red-600">
+                                                <span className="text-red-400">
                                                     - Listened
                                                 </span>
                                             ) : (
