@@ -95,9 +95,9 @@ export default function CustomCarousel() {
                             <img
                                 src={item.image}
                                 alt={`Slide ${index + 1}`}
-                                className="rounded-lg ml-36 w-1/4 h-1/4"
+                                className="rounded-l-xl ml-36 w-1/4 h-1/4"
                             />
-                            <div className="flex flex-col pl-4 pt-2 cursor-default">
+                            <div className="flex flex-col pl-4 pt-2 mr-36 cursor-default bg-white rounded-r-xl">
                                 <h2 className="text-2xl font-semibold mb-2">
                                     {item.title}
                                 </h2>
