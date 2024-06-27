@@ -15,6 +15,7 @@
 </div>
 <div>
 	<h2>Project Setup:</h2>
+	<p>The link to the project presentation slides are: https://docs.google.com/presentation/d/1JxSG1HusFG232dFwuicreojA6cwDDFzVgAvAwQcjneY/edit?usp=sharing</p>
 	<p>The Netlify link for the project is: https://poddpodcast.netlify.app/</p>
 	<p>Furthermore, if you were to want to run it locally, simply download the project files and put them in a folder, whereafter you would have to run 'npm run dev' in that folder to run the project.</p>
 	<p>Note: Any images not displaying might be due to source destinations not being the same on different systems, be sure to update the source destinations. Any other issues might be due to insufficient resources found on local computer, if so, make sure to include React and other relevant services to your files or computer.</p>
